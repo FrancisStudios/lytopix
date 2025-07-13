@@ -1,0 +1,7 @@
+[package]
+name = "lytopix"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+flo_draw = "0.3"
