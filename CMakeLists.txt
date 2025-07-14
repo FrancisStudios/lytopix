@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.31)
 project(lytopix)
-
+list(APPEND CMAKE_PREFIX_PATH "D:\\VCPKG-root-CLion\\packages\\raylib_x64-mingw-dynamic")
 set(CMAKE_CXX_STANDARD 17)
-
+find_package(raylib CONFIG REQUIRED)
 add_executable(lytopix main.cpp)
+target_link_libraries(lytopix PRIVATE raylib)
