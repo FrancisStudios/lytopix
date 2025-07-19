@@ -35,20 +35,13 @@ const Tokenizer = {
         if (expression == '') return;
 
         switch (expression) {
-            case '[start]':
+            case /\[([a-zA-Z0-9]*)\]/g.test(expression) ? expression : false:
                 Tokenizer
                     .tokenBuilder(
                         Tokenizer.EXPRESSION_TYPES.label,
-                        Tokenizer.EXPRESSION_IDENTIFIERS.start,
-                        []
-                    );
-                break;
-
-            case '[end]':
-                Tokenizer
-                    .tokenBuilder(
-                        Tokenizer.EXPRESSION_TYPES.label,
-                        Tokenizer.EXPRESSION_IDENTIFIERS.end,
+                        expression
+                            .replace('[', '')
+                            .replace(']', ''),
                         []
                     );
                 break;
