@@ -5,6 +5,8 @@
  * ©2025 Francis Studios Softwares by L.
 */
 import config from '../config/engine.config.json' with {type: 'json'};
+import FileOPS from './util/file-ops.util.js'
+import Tokenizer from './util/tokenizer.util.js';
 export default class Interpreter {
     instance;
     fileContents;
@@ -28,12 +30,10 @@ export default class Interpreter {
     }
 
     async executeROM() {
-        return new Promise((resolve, reject) => {
-            window
-                .fsAPI
-                .readFile(this._interpreter.ROMLocation)
-                .then(data => resolve(data))
-                .catch(err => reject(err));
-        });
+        this.fileContents = await FileOPS
+            .readROM(this._interpreter.ROMLocation);
+
+        
+        Tokenizer.source(this.fileContents);
     }
 }

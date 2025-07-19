@@ -20,4 +20,4 @@ engine.cls;
 const _interpreter = Interpreter.getInstance();
 
 _interpreter.init();
-_interpreter.executeROM().then(d => console.log(d));
+_interpreter.executeROM();
