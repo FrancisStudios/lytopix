@@ -1,0 +1,23 @@
+{
+  "name": "lytopix",
+  "version": "1.0.0",
+  "description": "An 8bit / 16bit esque 2D pixel game engine/emulator.",
+  "main": "main.js",
+  "type": "module",
+  "scripts": {
+    "start": "electron ."
+  },
+  "repository": "https://github.com/FrancisStudios/lytopix",
+  "keywords": [
+    "8bit",
+    "16bit",
+    "emulator",
+    "game engine",
+    "lytopix"
+  ],
+  "author": "Francis Stuidos",
+  "license": "",
+  "devDependencies": {
+    "electron": "^37.0.0"
+  }
+}
