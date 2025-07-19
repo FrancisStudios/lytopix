@@ -2,8 +2,8 @@
     "App":{
         "window":{
             "title": "Lytopix 1.0.0 | by Francis Studios",
-            "width": 800,
-            "height": 600,
+            "width": 320,
+            "height": 320,
             "menu": false
         },
 
