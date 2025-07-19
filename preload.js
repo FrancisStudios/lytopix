@@ -8,12 +8,10 @@
 import { contextBridge } from 'electron';
 import fs from 'fs';
 
-contextBridge.exposeInMainWorld('versions', {
-    node: () => process.versions.node,
-    chrome: () => process.versions.chrome,
-    electron: () => process.versions.electron
-});
-
+/**
+ * Expose File System functions into the Main World :) 
+ * might add some more options in future enrichments
+ */
 contextBridge.exposeInMainWorld('fsAPI', {
     readFile: (path, encoding = 'utf-8') => {
         return new Promise((resolve, reject) => {
