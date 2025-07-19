@@ -12,13 +12,12 @@ import { getScreen, setScreenDefaultSize } from './util/screen.util.js';
 /* Screen setup */
 const engine = Engine.getInstance();
 const HTMLCanvasElementScreen = getScreen();
-const _screen = engine.getVirtualScreen(HTMLCanvasElementScreen);
-
+engine.getVirtualScreen(HTMLCanvasElementScreen);
 setScreenDefaultSize(HTMLCanvasElementScreen);
-engine.clear;
+engine.cls;
 
 /* Interpreter setup */
-
 const _interpreter = Interpreter.getInstance();
 
 _interpreter.init();
+_interpreter.executeROM().then(d => console.log(d));

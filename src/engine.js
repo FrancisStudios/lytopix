@@ -32,9 +32,9 @@ export default class Engine {
 
     /**
      * CLRSCR routine.
+     * Clears screen... What do you expect? :D 
      */
-    get clear() {
-        console.log(this.v_screen)
+    get cls() {
         this.v_screen.fillStyle = '000000';
         this.v_screen.fillRect(0, 0, config.screen.width, config.screen.height);
         return true;
