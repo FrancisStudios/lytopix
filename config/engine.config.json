@@ -3,5 +3,8 @@
     "screen": {
         "width": 320,
         "height": 240
+    },
+    "interpreter": {
+        "ROMLocation": "./program.lytopix"
     }
 }
