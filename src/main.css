@@ -1,12 +1,18 @@
-/**
+/*
  *  ------ [ Property of Francis Studios ] ------
  * ===========================
  * github: https://github.com/francisstudios
  * ©2025 Francis Studios Softwares by L.
 */
 
-import { getScreen, setScreenDefaultSize } from './util/screen.util.js';
+html body {
+    overflow: hidden;
+    padding: 0px;
+    margin: 0px;
+    width: 100%;
+    height: 100%;
+}
 
-/* Basic Screen Preparations */
-const _screen = getScreen();
-setScreenDefaultSize(_screen);
+#screen {
+    border: 1px solid black;
+}
