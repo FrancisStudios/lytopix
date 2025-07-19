@@ -20,11 +20,10 @@ function createWindow() {
 
   mainWindow.loadFile('index.html');
 
-
-  console.log(CNF.App.window.menu);
-
   if (!CNF.App.window.menu) mainWindow.setMenu(null);
   if (CNF.App.developer.activated) mainWindow.webContents.openDevTools();
+
+  mainWindow.setResizable(CNF.App.window.resizable);
 
   mainWindow.on('closed', function () {
     mainWindow = null
