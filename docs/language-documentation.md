@@ -135,7 +135,36 @@ log my_variable;
 ```
 Thre result of the code above will log `te` as the remove command will eliminate the two last characters of `text`
 
+If you use negative numbers like `rem my_variable -2;` it will remove characters from the front and the result will be `xt`. 
+
+If you specify a larger number than the number of characters in your text, it will get rid of the whole text!
+
 #### Booleans
+
+Booleans can hold two values
+
+- true
+- false
+
+````
+[start];
+var my_variable true;
+
+if my_variable;
+
+@true;
+log "My variable is true ^^";
+
+@false;
+log "My variable is false!"
+fi;
+
+[end];
+````
+
+The result will be `My variable is true ^^` 
+
+You can not assign 1 or 0 instead of true and false (as it is common in other languages). You can not create a variable named 'true' as it will break the runtime.
 
 ### 3) 🗣️ Commands
 
