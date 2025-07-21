@@ -10,4 +10,4 @@ Lytopix is a small and simple game engine / emulator that can help you design an
 
 ## Documentation
 
-It will soon be available.
+You can read about the language in detail in the [language-documentation.md](./docs/language-documentation.md)
