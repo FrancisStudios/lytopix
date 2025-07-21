@@ -15,7 +15,7 @@ const Tokenizer = {
      * @param {string} sourceFile
      * @returns {Array<TokenObject>}
      */
-    source: (sourceFile) => {
+    source: async (sourceFile) => {
         const expressionList = sourceFile.split(';');
 
         for (let expression of expressionList) {
@@ -23,6 +23,7 @@ const Tokenizer = {
         }
 
         console.log(Tokenizer.output);
+        return Tokenizer.output;
     },
 
     /**

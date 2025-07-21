@@ -5,6 +5,7 @@
  * ©2025 Francis Studios Softwares by L.
 */
 import config from '../config/engine.config.json' with {type: 'json'};
+import ErrorParser from './util/error-parser.util.js';
 import FileOPS from './util/file-ops.util.js'
 import Tokenizer from './util/tokenizer.util.js';
 export default class Interpreter {
@@ -34,6 +35,9 @@ export default class Interpreter {
             .readROM(this._interpreter.ROMLocation);
 
         
-        Tokenizer.source(this.fileContents); // Tokenizing code TODO: this should return the token map
+        const TokenMap = await Tokenizer.source(this.fileContents); //Parses code into a TokenMap
+        const isErrorsDetected = await ErrorParser.parse(TokenMap); //Parses TokenMap if there are any errors
+        // Here should execution start if no errors have been found
+
     }
 }
