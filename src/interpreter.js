@@ -34,6 +34,6 @@ export default class Interpreter {
             .readROM(this._interpreter.ROMLocation);
 
         
-        Tokenizer.source(this.fileContents);
+        Tokenizer.source(this.fileContents); // Tokenizing code TODO: this should return the token map
     }
 }
