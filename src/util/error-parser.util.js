@@ -1,3 +1,5 @@
+import Tokenizer from "./tokenizer.util.js";
+
 const ErrorParser = {
 
     issuesList: [],
@@ -9,8 +11,19 @@ const ErrorParser = {
      * @param {Array<TokenObject>} TokenMap 
      * @returns {boolean}
      */
-    parse : async (TokenMap) => {
+    parse: async (TokenMap) => {
 
+        const existingTokens = [];
+        TokenMap
+            .filter(token => token.expressionType == Tokenizer.EXPRESSION_TYPES.label)
+            .forEach(label => {
+                if (existingTokens.includes(label)) {
+                    //createIssue() => duplicate token (check wording from docs)
+                    // break;
+                } else {
+                    ErrorParser.issuesList.push(label);
+                }
+            });
 
         return true
     },
@@ -21,7 +34,7 @@ const ErrorParser = {
      * issueList[]
      */
     createIssue: () => {
-        
+
     }
 }
 
