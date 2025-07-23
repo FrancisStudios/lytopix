@@ -20,11 +20,13 @@ const ErrorParser = {
                 if (existingTokens.includes(label)) {
                     //createIssue() => duplicate token (check wording from docs)
                     // break;
-                } else {
-                    ErrorParser.issuesList.push(label);
-                }
+                    const issue = ErrorParser.createIssue(label);
+                    ErrorParser.issuesList.push(issue);
+
+                } else existingTokens.push(label);
             });
 
+        console.log(ErrorParser.issuesList);
         return true
     },
 
@@ -34,7 +36,10 @@ const ErrorParser = {
      * issueList[]
      */
     createIssue: () => {
-
+        return {
+            description: "",
+            lineOfFault: label.address
+        }
     }
 }
 
