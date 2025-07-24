@@ -14,20 +14,22 @@ const ErrorParser = {
     parse: async (TokenMap) => {
 
         const existingTokens = [];
+
+
         TokenMap
             .filter(token => token.expressionType == Tokenizer.EXPRESSION_TYPES.label)
             .forEach(label => {
-                if (existingTokens.includes(label)) {
+                if (existingTokens.includes(label.expressionIdentifier)) {
                     //createIssue() => duplicate token (check wording from docs)
                     // break;
-                    const issue = ErrorParser.createIssue(label);
-                    ErrorParser.issuesList.push(issue);
+                    const issue = ErrorParser.createIssue(label); 
+                    ErrorParser.issuesList.push(label);
 
-                } else existingTokens.push(label);
+                } else existingTokens.push(label.expressionIdentifier);
             });
 
         console.log(ErrorParser.issuesList);
-        return true
+        return true;
     },
 
 
