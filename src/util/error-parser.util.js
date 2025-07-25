@@ -19,27 +19,32 @@ const ErrorParser = {
             .filter(token => token.expressionType == Tokenizer.EXPRESSION_TYPES.label)
             .forEach(token => {
                 existingTokens.includes(token.expressionIdentifier)
-                    ? ErrorParser.createIssue(token)
+                    ? ErrorParser.createIssue(token, ErrorParser.ISSUE_TYPE.labelDuplication)
                     : existingTokens.push(token.expressionIdentifier);
             });
 
-        return true;
+        return (ErrorParser.issuesList.length == 0);
     },
 
 
     /**
      * Creates fromal issue and pushes into
      * issueList[]
-     * @param {TokenObject} labelToken
+     * @param {TokenObject} token
+     * @param {ISSUE_TYPE} ISSUE_TYPE
      */
-    createIssue: (labelToken) => {
+    createIssue: (token, ISSUE_TYPE) => {
+        const issue = {
+            issue: ISSUE_TYPE,
+            token: token
+        };
 
-        console.log('error blin');
+        ErrorParser.issuesList.push(issue);
+        console.log(ErrorParser.issuesList);
+    },
 
-        return {
-            description: "",
-            lineOfFault: labelToken.address
-        }
+    ISSUE_TYPE: {
+        labelDuplication: 'label_duplication'
     }
 }
 
