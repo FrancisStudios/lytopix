@@ -47,6 +47,15 @@ const Tokenizer = {
                     );
                 break;
 
+            case 'debug':
+                Tokenizer
+                    .tokenBuilder(
+                        Tokenizer.EXPRESSION_TYPES.command,
+                        'debug',
+                        []
+                    );
+                break;
+
             default:
                 Tokenizer
                     .tokenBuilder(
