@@ -15,20 +15,14 @@ const ErrorParser = {
 
         const existingTokens = [];
 
-
         TokenMap
             .filter(token => token.expressionType == Tokenizer.EXPRESSION_TYPES.label)
-            .forEach(label => {
-                if (existingTokens.includes(label.expressionIdentifier)) {
-                    //createIssue() => duplicate token (check wording from docs)
-                    // break;
-                    const issue = ErrorParser.createIssue(label); 
-                    ErrorParser.issuesList.push(label);
-
-                } else existingTokens.push(label.expressionIdentifier);
+            .forEach(token => {
+                existingTokens.includes(token.expressionIdentifier)
+                    ? ErrorParser.createIssue(token)
+                    : existingTokens.push(token.expressionIdentifier);
             });
 
-        console.log(ErrorParser.issuesList);
         return true;
     },
 
@@ -36,11 +30,15 @@ const ErrorParser = {
     /**
      * Creates fromal issue and pushes into
      * issueList[]
+     * @param {TokenObject} labelToken
      */
-    createIssue: () => {
+    createIssue: (labelToken) => {
+
+        console.log('error blin');
+
         return {
             description: "",
-            lineOfFault: label.address
+            lineOfFault: labelToken.address
         }
     }
 }
