@@ -33,7 +33,6 @@ const ErrorParser = {
         };
 
         ErrorParser.issuesList.push(issue);
-        console.log(ErrorParser.issuesList);
     },
 
     parsers: {

@@ -37,6 +37,8 @@ export default class Interpreter {
         
         const TokenMap = await Tokenizer.source(this.fileContents); //Parses code into a TokenMap
         const isErrorsDetected = await ErrorParser.parse(TokenMap); //Parses TokenMap if there are any errors
+
+        console.log(ErrorParser.issuesList, 'issuesList');
         // Here should execution start if no errors have been found
 
     }
