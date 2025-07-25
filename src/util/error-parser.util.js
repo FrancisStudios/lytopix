@@ -12,16 +12,9 @@ const ErrorParser = {
      * @returns {boolean}
      */
     parse: async (TokenMap) => {
+        const ERROR_PARSERS = ErrorParser.parsers;
 
-        const existingTokens = [];
-
-        TokenMap
-            .filter(token => token.expressionType == Tokenizer.EXPRESSION_TYPES.label)
-            .forEach(token => {
-                existingTokens.includes(token.expressionIdentifier)
-                    ? ErrorParser.createIssue(token, ErrorParser.ISSUE_TYPE.labelDuplication)
-                    : existingTokens.push(token.expressionIdentifier);
-            });
+        await ERROR_PARSERS.duplicateTokenParser(TokenMap);
 
         return (ErrorParser.issuesList.length == 0);
     },
@@ -41,6 +34,20 @@ const ErrorParser = {
 
         ErrorParser.issuesList.push(issue);
         console.log(ErrorParser.issuesList);
+    },
+
+    parsers: {
+        duplicateTokenParser: async (TokenMap) => {
+            const existingTokens = [];
+
+            TokenMap
+                .filter(token => token.expressionType == Tokenizer.EXPRESSION_TYPES.label)
+                .forEach(token => {
+                    existingTokens.includes(token.expressionIdentifier)
+                        ? ErrorParser.createIssue(token, ErrorParser.ISSUE_TYPE.labelDuplication)
+                        : existingTokens.push(token.expressionIdentifier);
+                });
+        }
     },
 
     ISSUE_TYPE: {
