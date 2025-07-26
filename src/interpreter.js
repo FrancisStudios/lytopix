@@ -48,7 +48,7 @@ export default class Interpreter {
      */
     startExecution = async (TokenMap) => {
         for(let instructionToken of TokenMap){
-            this.pullNextFrame(instructionToken);
+            await this.pullNextFrame(instructionToken);
         }
     }
 
@@ -57,7 +57,12 @@ export default class Interpreter {
      * to set a fixed framerate too. 
      * @param {TokenObject} instructionToken 
      */
-    pullNextFrame = (instructionToken) => {
-
+    pullNextFrame = async (instructionToken) => {
+       return new Promise((resolve, reject) => {
+        setTimeout(()=>{
+            console.log(instructionToken);
+            resolve();
+        }, 5000);
+       });
     }
 }
