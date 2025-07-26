@@ -34,7 +34,6 @@ export default class Interpreter {
         this.fileContents = await FileOPS
             .readROM(this._interpreter.ROMLocation);
 
-
         const TokenMap = await Tokenizer.source(this.fileContents); //Parses code into a TokenMap
         const isErrorsDetected = await ErrorParser.parse(TokenMap); //Parses TokenMap if there are any errors
 
@@ -47,22 +46,36 @@ export default class Interpreter {
      * @param {Array<TokenObject>} TokenMap 
      */
     startExecution = async (TokenMap) => {
-        for(let instructionToken of TokenMap){
-            await this.pullNextFrame(instructionToken);
+
+        const shouldPullNextFrame = true;
+
+        for (let instructionToken of TokenMap) {
+            shouldPullNextFrame
+                ? await this.pullNextFrame(instructionToken)
+                : await this.simpleExecution(instructionToken);
         }
     }
 
     /**
      * Pulls next frame with instruction. This will have
-     * to set a fixed framerate too. 
+     * to set a fixed framerate too. ONLY IF THE INSTRUCTION
+     * IS TIMED (so debug and basic variable ops will not be
+     * pulled in here - only visual and big changes!!! )
      * @param {TokenObject} instructionToken 
      */
     pullNextFrame = async (instructionToken) => {
-       return new Promise((resolve, reject) => {
-        setTimeout(()=>{
-            console.log(instructionToken);
-            resolve();
-        }, 5000);
-       });
+        return new Promise((resolve, reject) => {
+            setTimeout(() => {
+                console.log(instructionToken);
+                resolve();
+            }, 5000);
+        });
+    }
+
+    /** Maybe this won't be the most elegant solution, so 
+     * keep thinking pls.
+     */
+    simpleExecution = async (instructionToken) => {
+
     }
 }
