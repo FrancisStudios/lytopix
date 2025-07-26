@@ -34,12 +34,30 @@ export default class Interpreter {
         this.fileContents = await FileOPS
             .readROM(this._interpreter.ROMLocation);
 
-        
+
         const TokenMap = await Tokenizer.source(this.fileContents); //Parses code into a TokenMap
         const isErrorsDetected = await ErrorParser.parse(TokenMap); //Parses TokenMap if there are any errors
 
-        console.log(ErrorParser.issuesList, 'issuesList');
-        // Here should execution start if no errors have been found
+        if (!isErrorsDetected)
+            await this.startExecution(TokenMap);
+    }
+
+    /**
+     * Execution Entry Point after error checks
+     * @param {Array<TokenObject>} TokenMap 
+     */
+    startExecution = async (TokenMap) => {
+        for(let instructionToken of TokenMap){
+            this.pullNextFrame(instructionToken);
+        }
+    }
+
+    /**
+     * Pulls next frame with instruction. This will have
+     * to set a fixed framerate too. 
+     * @param {TokenObject} instructionToken 
+     */
+    pullNextFrame = (instructionToken) => {
 
     }
 }

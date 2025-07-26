@@ -6,5 +6,8 @@
     },
     "interpreter": {
         "ROMLocation": "./program.lytopix"
+    },
+    "engine": {
+        "targetFPS": 30
     }
 }
