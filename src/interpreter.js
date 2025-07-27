@@ -46,21 +46,19 @@ export default class Interpreter {
      * @param {Array<TokenObject>} TokenMap 
      */
     startExecution = async (TokenMap) => {
-
-        const shouldPullNextFrame = true;
-
         for (let instructionToken of TokenMap) {
-            shouldPullNextFrame
-                ? await this.pullNextFrame(instructionToken)
-                : await this.simpleExecution(instructionToken);
+            /** Instruction execution loop */
+            await this.executeInstruction(instructionToken);
         }
+    }
+
+    executeInstruction = async (token) => {
+
     }
 
     /**
      * Pulls next frame with instruction. This will have
-     * to set a fixed framerate too. ONLY IF THE INSTRUCTION
-     * IS TIMED (so debug and basic variable ops will not be
-     * pulled in here - only visual and big changes!!! )
+     * to set a fixed framerate too.pullNextFrame
      * @param {TokenObject} instructionToken 
      */
     pullNextFrame = async (instructionToken) => {
@@ -70,12 +68,5 @@ export default class Interpreter {
                 resolve();
             }, 5000);
         });
-    }
-
-    /** Maybe this won't be the most elegant solution, so 
-     * keep thinking pls.
-     */
-    simpleExecution = async (instructionToken) => {
-
     }
 }
