@@ -62,7 +62,7 @@ export default class Interpreter {
      * @param {TokenObject} instructionToken 
      */
     pullNextFrame = async (instructionToken) => {
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve, _) => {
             setTimeout(() => {
                 console.log(instructionToken);
                 resolve();

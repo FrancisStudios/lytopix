@@ -15,7 +15,7 @@ const ErrorParser = {
         const ERROR_PARSERS = ErrorParser.parsers;
 
         await ERROR_PARSERS.duplicateTokenParser(TokenMap);
-        
+
         return (!ErrorParser.issuesList.length == 0);
     },
 
