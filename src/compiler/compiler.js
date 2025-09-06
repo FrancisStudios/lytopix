@@ -5,6 +5,7 @@
  * ©2025 Francis Studios Softwares by L.
 */
 
+import LytopixASMLexer from "./lexer.js";
 import LytopixSyntaxizer from "./utils/syntaxizer.js";
 
 export default class LytopixCompiler {
@@ -21,7 +22,7 @@ export default class LytopixCompiler {
             async (r, _) => {
 
                 const syntaxWeb = await LytopixSyntaxizer(_asm_source);
-                console.log(syntaxWeb);
+                const whatever = await LytopixASMLexer.tokenize(syntaxWeb);
                 
             }
         );
