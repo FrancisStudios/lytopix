@@ -53,7 +53,7 @@ export default class Interpreter {
     }
 
     executeInstruction = async (token) => {
-
+        
     }
 
     /**
