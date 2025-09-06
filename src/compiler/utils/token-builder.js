@@ -5,7 +5,7 @@
  * ©2025 Francis Studios Softwares by L.
 */
 
-import { TOKEN_TYPES, TOKEN_VERBS } from "../ENUM.js"
+import { REGISTERS, TOKEN_TYPES, TOKEN_VERBS } from "../ENUM.js"
 
 export default class LytopixTokenBuilder {
     static tokenTemplate = {
@@ -33,11 +33,11 @@ export default class LytopixTokenBuilder {
         };
     }
 
-     /**
-     * Directive syntax processing
-     * @param {string} syntax 
-     * @returns {Token<Directive>}
-     */
+    /**
+    * Directive syntax processing
+    * @param {string} syntax 
+    * @returns {Token<Directive>}
+    */
     static directive(syntax) {
         const directiveVerb = syntax.replace('.', '')
         return {
@@ -46,6 +46,33 @@ export default class LytopixTokenBuilder {
             name: '',
             params: []
         };
+    }
+
+    static loadRegister(register, syntax) {
+        let target;
+
+        switch (register) {
+            case REGISTERS.A:
+                target = TOKEN_VERBS.LOAD_ACCUMULATOR;
+                break;
+
+            case REGISTERS.X:
+                target = TOKEN_VERBS.LOAD_XINDEX;
+                break;
+
+            case REGISTERS.Y:
+                target = TOKEN_VERBS.LOAD_YINDEX;
+                break;
+        }
+
+        const params = syntax.replace(target, 1);
+
+        return {
+            type: TOKEN_TYPES.INSTRUCTION,
+            verb: target,
+            name: register,
+            params: [params]
+        }
     }
 
 }

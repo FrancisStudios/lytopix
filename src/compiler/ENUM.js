@@ -14,10 +14,20 @@ const TOKEN_TYPES = {
 
 const TOKEN_VERBS = {
     START: 'start',
-    MEMORY_ADDR: 'memory_addr'
+    MEMORY_ADDR: 'memory_addr',
+    LOAD_ACCUMULATOR: 'lda',
+    LOAD_XINDEX: 'ldx',
+    LOAD_YINDEX: 'ldy'
+}
+
+const REGISTERS = {
+    A: 'accumulator',
+    X: 'xindex',
+    Y: 'yindex'
 }
 
 export {
     TOKEN_TYPES,
-    TOKEN_VERBS
+    TOKEN_VERBS,
+    REGISTERS
 }

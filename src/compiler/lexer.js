@@ -5,6 +5,7 @@
  * ©2025 Francis Studios Softwares by L.
 */
 
+import { REGISTERS } from "./ENUM.js";
 import LytopixTokenBuilder from "./utils/token-builder.js";
 
 /**
@@ -29,14 +30,15 @@ export default class LytopixASMLexer {
 
     static _syntaxRuleFinder = (syntax) => {
         switch (syntax) {
-            /* Labels */
-            case /\.\w+:/.test(syntax) ? syntax : false:
-                break;
 
-            /* Directives */
+            case /\.\w+:/.test(syntax) ? syntax : false:
+                return LytopixTokenBuilder.label(syntax);
+
             case /\.\w+/.test(syntax) ? syntax : false:
                 return LytopixTokenBuilder.directive(syntax);
-                
+
+            case /^lda\s[a-zA-Z0-9]*/.test(syntax) ? syntax : false:
+                return LytopixTokenBuilder.loadRegister(REGISTERS.A, syntax);
 
             default:
                 break;
