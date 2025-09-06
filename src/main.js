@@ -5,19 +5,16 @@
  * ©2025 Francis Studios Softwares by L.
 */
 
-import Engine from './engine.js';
-import Interpreter from './interpreter.js';
-import { getScreen, setScreenDefaultSize } from './util/screen.util.js';
+import LytopixCompiler from "./compiler/compiler.js";
 
-/* Screen setup */
-const engine = Engine.getInstance();
-const HTMLCanvasElementScreen = getScreen();
-engine.getVirtualScreen(HTMLCanvasElementScreen);
-setScreenDefaultSize(HTMLCanvasElementScreen);
-engine.cls;
+const Compiler = LytopixCompiler.getInstance();
 
-/* Interpreter setup */
-const _interpreter = Interpreter.getInstance();
 
-_interpreter.init();
-_interpreter.executeROM();
+Compiler.compile(`
+    .start:
+
+            lda $00ff00
+            sta $000000
+            rts
+
+    `)
