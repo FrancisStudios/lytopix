@@ -1,5 +1,5 @@
 .start
 
-        lda $00ff00
+        lda $00000
 
         rts

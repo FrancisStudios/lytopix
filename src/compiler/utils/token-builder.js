@@ -65,7 +65,9 @@ export default class LytopixTokenBuilder {
                 break;
         }
 
-        const params = syntax.replace(target, 1);
+        const params = syntax
+            .replace(target, '')
+            .trim();
 
         return {
             type: TOKEN_TYPES.INSTRUCTION,
