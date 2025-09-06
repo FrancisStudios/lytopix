@@ -11,7 +11,7 @@ const Compiler = LytopixCompiler.getInstance();
 
 
 Compiler.compile(`
-    .start:
+    .start
 
             lda $00ff00
             sta $000000

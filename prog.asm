@@ -1,4 +1,4 @@
-.start:
+.start
 
         lda $00ff00
 
