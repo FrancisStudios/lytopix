@@ -40,6 +40,12 @@ export default class LytopixASMLexer {
             case /^lda\s[a-zA-Z0-9]*/.test(syntax) ? syntax : false:
                 return LytopixTokenBuilder.loadRegister(REGISTERS.A, syntax);
 
+            case /^ldx\s[a-zA-Z0-9]*/.test(syntax) ? syntax : false:
+                return LytopixTokenBuilder.loadRegister(REGISTERS.X, syntax);
+
+            case /^ldy\s[a-zA-Z0-9]*/.test(syntax) ? syntax : false:
+                return LytopixTokenBuilder.loadRegister(REGISTERS.Y, syntax);
+
             default:
                 break;
         }
