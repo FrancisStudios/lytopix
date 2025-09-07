@@ -21,7 +21,8 @@ export default class LytopixCompiler {
         return new Promise(
             async (r, _) => {
 
-                const syntaxWeb = await LytopixSyntaxizer(_asm_source);
+                const syntaxWebWithComments = await LytopixSyntaxizer(_asm_source);
+                const syntaxWeb = await LytopixCommentExcluder(syntaxWebWithComments);
                 const whatever = await LytopixASMLexer.tokenize(syntaxWeb);
                 
             }

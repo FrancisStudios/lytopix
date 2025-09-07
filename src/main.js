@@ -12,8 +12,8 @@ const Compiler = LytopixCompiler.getInstance();
 
 Compiler.compile(`
     .start
-
-            lda $00ff00
+                                ;non-inline comment
+            lda $00ff00         ;inline comment
             sta $000000
             rts
 
