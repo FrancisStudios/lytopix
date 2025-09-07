@@ -17,7 +17,10 @@ const TOKEN_VERBS = {
     MEMORY_ADDR: 'memory_addr',
     LOAD_ACCUMULATOR: 'lda',
     LOAD_XINDEX: 'ldx',
-    LOAD_YINDEX: 'ldy'
+    LOAD_YINDEX: 'ldy',
+    STORE_ACCUMULATOR: 'sta',
+    STORE_XINDEX: 'stx',
+    STORE_YINDEX: 'sty'
 }
 
 const REGISTERS = {

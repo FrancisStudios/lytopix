@@ -25,6 +25,7 @@ export default class LytopixASMLexer {
             }
 
             console.log(TokenCollection);
+            resolve(TokenCollection);
         });
     }
 
@@ -45,6 +46,15 @@ export default class LytopixASMLexer {
 
             case /^ldy\s[a-zA-Z0-9]*/.test(syntax) ? syntax : false:
                 return LytopixTokenBuilder.loadRegister(REGISTERS.Y, syntax);
+
+            case /^sta\s[a-zA-Z0-9]*/.test(syntax) ? syntax : false:
+                return LytopixTokenBuilder.storeRegister(REGISTERS.A, syntax);
+
+            case /^stx\s[a-zA-Z0-9]*/.test(syntax) ? syntax : false:
+                return LytopixTokenBuilder.storeRegister(REGISTERS.X, syntax);
+
+            case /^sty\s[a-zA-Z0-9]*/.test(syntax) ? syntax : false:
+                return LytopixTokenBuilder.storeRegister(REGISTERS.Y, syntax);
 
             default:
                 break;

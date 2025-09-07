@@ -48,9 +48,14 @@ export default class LytopixTokenBuilder {
         };
     }
 
+    /**
+    * Load register syntax processing
+    * @param {REGISTERS} register 
+    * @param {string} syntax 
+    * @returns {Token<Instruction>}
+    */
     static loadRegister(register, syntax) {
         let target;
-
         switch (register) {
             case REGISTERS.A:
                 target = TOKEN_VERBS.LOAD_ACCUMULATOR;
@@ -64,14 +69,45 @@ export default class LytopixTokenBuilder {
                 target = TOKEN_VERBS.LOAD_YINDEX;
                 break;
         }
-
         const params = syntax
             .replace(target, '')
+            .trim();
+        return {
+            type: TOKEN_TYPES.INSTRUCTION,
+            verb: target,
+            name: register,
+            params: [params]
+        }
+    }
+
+    /**
+    * Store register syntax processing
+    * @param {REGISTERS} register 
+    * @param {string} syntax 
+    * @returns {Token<Instruction>}
+    */
+    static storeRegister(register, syntax) {
+        let verb;
+        switch (register) {
+            case REGISTERS.A:
+                verb = TOKEN_VERBS.STORE_ACCUMULATOR;
+                break;
+
+            case REGISTERS.X:
+                verb = TOKEN_VERBS.STORE_XINDEX;
+                break;
+
+            case REGISTERS.Y:
+                verb = TOKEN_VERBS.STORE_YINDEX;
+                break;
+        }
+        const params = syntax
+            .replace(verb, '')
             .trim();
 
         return {
             type: TOKEN_TYPES.INSTRUCTION,
-            verb: target,
+            verb: verb,
             name: register,
             params: [params]
         }
