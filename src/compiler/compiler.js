@@ -7,6 +7,7 @@
 
 import LytopixASMLexer from "./lexer.js";
 import LytopixSyntaxizer from "./utils/syntaxizer.js";
+import LytopixCommentExcluder from "./utils/comment.js";
 
 export default class LytopixCompiler {
 
@@ -20,7 +21,6 @@ export default class LytopixCompiler {
     compile = (_asm_source) => {
         return new Promise(
             async (r, _) => {
-
                 const syntaxWebWithComments = await LytopixSyntaxizer(_asm_source);
                 const syntaxWeb = await LytopixCommentExcluder(syntaxWebWithComments);
                 const whatever = await LytopixASMLexer.tokenize(syntaxWeb);
