@@ -8,6 +8,7 @@
 import LytopixASMLexer from "./lexer.js";
 import LytopixSyntaxizer from "./utils/syntaxizer.js";
 import LytopixCommentExcluder from "./utils/comment.js";
+import LytopixASMHexer from "./hexer.js";
 
 export default class LytopixCompiler {
 
@@ -21,10 +22,12 @@ export default class LytopixCompiler {
     compile = (_asm_source) => {
         return new Promise(
             async (r, _) => {
+                const HEXER = LytopixASMHexer.getInstance();
+
                 const syntaxWebWithComments = await LytopixSyntaxizer(_asm_source);
                 const syntaxWeb = await LytopixCommentExcluder(syntaxWebWithComments);
-                const whatever = await LytopixASMLexer.tokenize(syntaxWeb);
-                
+                const lexedTokenList = await LytopixASMLexer.tokenize(syntaxWeb);
+                const hexadecimalFile = await HEXER.hex(lexedTokenList);
             }
         );
     }
