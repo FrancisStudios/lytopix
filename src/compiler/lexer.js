@@ -56,6 +56,9 @@ export default class LytopixASMLexer {
             case /^sty\s[a-zA-Z0-9]*/.test(syntax) ? syntax : false:
                 return LytopixTokenBuilder.storeRegister(REGISTERS.Y, syntax);
 
+            case /^rts/.test(syntax) ? syntax : false:
+                return LytopixTokenBuilder.returnFromSubroutine();
+
             default:
                 break;
         }

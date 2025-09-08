@@ -20,7 +20,8 @@ const TOKEN_VERBS = {
     LOAD_YINDEX: 'ldy',
     STORE_ACCUMULATOR: 'sta',
     STORE_XINDEX: 'stx',
-    STORE_YINDEX: 'sty'
+    STORE_YINDEX: 'sty',
+    RETURN_FROM_SUB: 'rts'
 }
 
 const REGISTERS = {

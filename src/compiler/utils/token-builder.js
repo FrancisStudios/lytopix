@@ -113,4 +113,18 @@ export default class LytopixTokenBuilder {
         }
     }
 
+    /**
+    * RTS instruction processing
+    * @param {string} syntax 
+    * @returns {Token<Instruction>}
+    */
+    static returnFromSubroutine() {
+        return {
+            type: TOKEN_TYPES.INSTRUCTION,
+            verb: TOKEN_VERBS.RETURN_FROM_SUB,
+            name: TOKEN_VERBS.RETURN_FROM_SUB,
+            params: []
+        }
+    }
+
 }
