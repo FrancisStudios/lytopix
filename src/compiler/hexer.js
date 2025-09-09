@@ -5,13 +5,14 @@
  * ©2025 Francis Studios Softwares by L.
 */
 
-import { TOKEN_TYPES, TOKEN_VERBS } from "./ENUM.js";
+import { ERROR_LOCATIONS, ERROR_TYPES, TOKEN_TYPES, TOKEN_VERBS } from "./ENUM.js";
 import BYTE_DICTIONARY from "./utils/byte-dict.js";
+import LytopixLogger from "./utils/logger.js";
 
 export default class LytopixASMHexer {
     instance
     BYTES = '00'
-
+    logger = LytopixLogger.getInstance();
 
     _unit32_padding = '00 00 00 00';
 
@@ -40,11 +41,22 @@ export default class LytopixASMHexer {
 
                 switch (target) {
                     /* .start                                                  */
-                    case (target.type == TOKEN_TYPES.DIRECTIVE && target.verb == TOKEN_VERBS.START) ? target : false:
+                    case (
+                        target.type == TOKEN_TYPES.DIRECTIVE
+                        && target.verb == TOKEN_VERBS.START
+                    )
+                        ? target : false:
+
                         this.BYTES += ` ${this.byteFormat(BYTE_DICTIONARY.START_DIRECTIVE.hex[0])}`;
                         break;
 
-                    case (target.type == TOKEN_TYPES.INSTRUCTION && /^ld[a,x,y]$/.test(target.verb)) ? target : false:
+                    /* lda, ldx, ldy                                           */
+                    case (
+                        target.type == TOKEN_TYPES.INSTRUCTION
+                        && /^ld[a,x,y]$/.test(target.verb)
+                    )
+                        ? target : false:
+
                         switch (target.verb) {
                             case 'lda':
                                 this.BYTES += ` ${this.byteFormat(BYTE_DICTIONARY.LOAD_ACCUMULATOR.hex[0])}`;
@@ -61,6 +73,10 @@ export default class LytopixASMHexer {
                         break;
 
                     default:
+                        this.logger.error(
+                            ERROR_TYPES.INVALID_TOKEN, ERROR_LOCATIONS.HEXER,
+                            ` trying to find byte representation for '${target.verb}' with name '${target.name}'`
+                        );
                         break;
                 }
             }

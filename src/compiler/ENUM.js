@@ -30,8 +30,19 @@ const REGISTERS = {
     Y: 'yindex'
 }
 
+const ERROR_TYPES = {
+    INVALID_TOKEN: 'invalid token'
+}
+
+const ERROR_LOCATIONS = {
+    LEXER: 'lexer',
+    HEXER: 'hexer'
+}
+
 export {
     TOKEN_TYPES,
     TOKEN_VERBS,
-    REGISTERS
+    REGISTERS,
+    ERROR_TYPES,
+    ERROR_LOCATIONS
 }
