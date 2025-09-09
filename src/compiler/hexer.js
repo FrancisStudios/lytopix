@@ -12,6 +12,9 @@ export default class LytopixASMHexer {
     instance
     BYTES = '00'
 
+
+    _unit32_padding = '00 00 00 00';
+
     static getInstance = () => {
         if (!this.instance) this.instance = new LytopixASMHexer();
         return this.instance
@@ -41,6 +44,21 @@ export default class LytopixASMHexer {
                         this.BYTES += ` ${this.byteFormat(BYTE_DICTIONARY.START_DIRECTIVE.hex[0])}`;
                         break;
 
+                    case (target.type == TOKEN_TYPES.INSTRUCTION && /^ld[a,x,y]$/.test(target.verb)) ? target : false:
+                        switch (target.verb) {
+                            case 'lda':
+                                this.BYTES += ` ${this.byteFormat(BYTE_DICTIONARY.LOAD_ACCUMULATOR.hex[0])}`;
+                                break;
+                            case 'ldx':
+                                this.BYTES += ` ${this.byteFormat(BYTE_DICTIONARY.LOAD_XINDEX.hex[0])}`;
+                                break;
+                            case 'ldy':
+                                this.BYTES += ` ${this.byteFormat(BYTE_DICTIONARY.LOAD_YINDEX.hex[0])}`;
+                                break;
+                        }
+
+                        this.BYTES += ` ${this._unit32_padding}`;
+                        break;
 
                     default:
                         break;
