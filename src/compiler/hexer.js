@@ -56,7 +56,6 @@ export default class LytopixASMHexer {
                         && /^ld[a,x,y]$/.test(target.verb)
                     )
                         ? target : false:
-
                         switch (target.verb) {
                             case 'lda':
                                 this.BYTES += ` ${this.byteFormat(BYTE_DICTIONARY.LOAD_ACCUMULATOR.hex[0])}`;
@@ -68,8 +67,10 @@ export default class LytopixASMHexer {
                                 this.BYTES += ` ${this.byteFormat(BYTE_DICTIONARY.LOAD_YINDEX.hex[0])}`;
                                 break;
                         }
+                        this.BYTES += ` ${this._unit32_padding}`;   // TODO: add real parameters || padding
 
-                        this.BYTES += ` ${this._unit32_padding}`;
+                        this.BYTES += '';
+
                         break;
 
                     default:
