@@ -6,6 +6,7 @@
 */
 
 import { ERROR_LOCATIONS, ERROR_TYPES, TOKEN_TYPES, TOKEN_VERBS } from "./ENUM.js";
+import LytopixGenericParameterResolver from "./utils/address-value-parameter-resolver.js";
 import BYTE_DICTIONARY from "./utils/byte-dict.js";
 import LytopixLogger from "./utils/logger.js";
 
@@ -13,8 +14,6 @@ export default class LytopixASMHexer {
     instance
     BYTES = '00'
     logger = LytopixLogger.getInstance();
-
-    _unit32_padding = '00 00 00 00';
 
     static getInstance = () => {
         if (!this.instance) this.instance = new LytopixASMHexer();
@@ -67,9 +66,10 @@ export default class LytopixASMHexer {
                                 this.BYTES += ` ${this.byteFormat(BYTE_DICTIONARY.LOAD_YINDEX.hex[0])}`;
                                 break;
                         }
-                        this.BYTES += ` ${this._unit32_padding}`;   // TODO: add real parameters || padding
 
-                        this.BYTES += '';
+                        this.BYTES += LytopixGenericParameterResolver(
+                            this.byteFormat(target.params[0]) // TODO
+                        );
 
                         break;
 

@@ -31,12 +31,14 @@ const REGISTERS = {
 }
 
 const ERROR_TYPES = {
-    INVALID_TOKEN: 'invalid token'
+    INVALID_TOKEN: 'invalid token',
+    INVALID_PARAM: 'invalid parameter'
 }
 
 const ERROR_LOCATIONS = {
     LEXER: 'lexer',
-    HEXER: 'hexer'
+    HEXER: 'hexer',
+    PARAM_RESOLVER_GENERIC: 'generic numerical parameter resolver'
 }
 
 export {
