@@ -53,6 +53,7 @@ const singleNumberParameter = (_param) => {
         case 16:
             console.log('hex param detectd');
             return _param; //TODO: continue here next time
+            // BYTES 00 01 11$00ff00ff -> BYTES 00 01 11 00 ff 00 ff
     }
 }
 
