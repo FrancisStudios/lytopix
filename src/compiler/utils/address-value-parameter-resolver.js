@@ -12,6 +12,19 @@ import LytopixMath from "./math.js";
 const Logger = LytopixLogger.getInstance();
 
 /**
+ * Transform string hexes into the correct
+ * format '00000000' -> '00 00 00 00' 
+ * @param {sring} _input 
+ * @returns 
+ */
+const hexToStringFormat = (_input) => {
+    return _input
+        .replace('$', '')
+        .match(/.{1,2}/g)
+        .join(' ');
+}
+
+/**
  * Receives a parameter as a string of '$0ef10000' or composite  '$0ef10000 + $0ba1034f0'
  * can be hexadecimal or decimal or binary (only these systems are supported by Lytopix)
  * @param {Param<Instruction>} _parameters 
@@ -51,9 +64,7 @@ const singleNumberParameter = (_param) => {
             break;
 
         case 16:
-            console.log('hex param detectd');
-            return _param; //TODO: continue here next time
-            // BYTES 00 01 11$00ff00ff -> BYTES 00 01 11 00 ff 00 ff
+            return ` ${hexToStringFormat(_param)}`;
     }
 }
 
