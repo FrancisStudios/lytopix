@@ -57,10 +57,10 @@ const singleNumberParameter = (_param) => {
     console.log(base, _param)
 
     switch (base) {
-        case 2:
+        case 2: // CONTINUE HERE NEXT TIME - math.js
             break;
 
-        case 10:
+        case 10: // CONTINUE HERE NEXT TIME - math.js
             break;
 
         case 16:

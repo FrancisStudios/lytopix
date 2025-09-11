@@ -30,4 +30,12 @@ export default class LytopixMath {
         }
 
     }
+
+    static decimal2Hex = (_number) => {
+        const _hexProto = _number.toString(16);
+    }
+
+    static binary2Hex = (_number) => {
+
+    }
 }
