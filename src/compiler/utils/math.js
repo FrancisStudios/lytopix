@@ -5,6 +5,10 @@
  * ©2025 Francis Studios Softwares by L.
 */
 
+import { ERROR_LOCATIONS, ERROR_TYPES } from "../ENUM";
+import LytopixLogger from "./logger.js";
+
+const Logger = LytopixLogger.getInstance();
 export default class LytopixMath {
 
 
@@ -32,10 +36,16 @@ export default class LytopixMath {
     }
 
     static decimal2Hex = (_number) => {
-        const _hexProto = _number.toString(16);
+        return _number.toString(16);
     }
 
     static binary2Hex = (_number) => {
+        if (!/^[01]+$/.test(_number))
+            Logger.error(
+                ERROR_TYPES.MATH_ERROR,
+                ERROR_LOCATIONS.MATH,
+                'can not parse input number as binary');
 
+        return parseInt(_number, 2).toString(16);
     }
 }

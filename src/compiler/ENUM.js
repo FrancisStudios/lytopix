@@ -32,13 +32,15 @@ const REGISTERS = {
 
 const ERROR_TYPES = {
     INVALID_TOKEN: 'invalid token',
-    INVALID_PARAM: 'invalid parameter'
+    INVALID_PARAM: 'invalid parameter',
+    MATH_ERROR: 'math error'
 }
 
 const ERROR_LOCATIONS = {
     LEXER: 'lexer',
     HEXER: 'hexer',
-    PARAM_RESOLVER_GENERIC: 'generic numerical parameter resolver'
+    PARAM_RESOLVER_GENERIC: 'generic numerical parameter resolver',
+    MATH: 'lytopix math resolver'
 }
 
 export {
