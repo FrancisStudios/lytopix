@@ -35,10 +35,20 @@ export default class LytopixMath {
 
     }
 
+    /**
+     * Converts decimal numbers (or strs) to hex
+     * @param {Number|String<Number>} _number 
+     * @returns {String<Number<Hex>>} 
+     */
     static decimal2Hex = (_number) => {
         return _number.toString(16);
     }
 
+    /**
+    * Converts binary numbers (or strs) to hex
+    * @param {Number|String<Number>} _number 
+    * @returns {String<Number<Bin>>} 
+    */
     static binary2Hex = (_number) => {
         if (!/^[01]+$/.test(_number))
             Logger.error(
