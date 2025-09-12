@@ -67,6 +67,21 @@ export default class LytopixASMHexer {
                                 break;
                         }
 
+                        /* Resolve if Parameter is an actual number */
+                        const processActualNumberParameter = (parameter) => {
+                            target.params[0] = parameter.replace('#', '')
+                        }
+
+                        const processAddressNumberParameter = (parameter) => {
+                            this.BYTES += ` ${this.byteFormat(BYTE_DICTIONARY.ADDRESS_SIGNATURE.hex[0])}`;
+                        }
+
+                        /^#[%$0-9a-fA-F][0-9a-fA-F]+$/.test(target.params[0])
+                            ? processActualNumberParameter(target.params[0])
+                            : processAddressNumberParameter(target.params[0]);
+
+                        
+                        /* Resolve Parameter Numerical Value */
                         this.BYTES += LytopixGenericParameterResolver(
                             this.byteFormat(target.params[0]) // TODO
                         );
