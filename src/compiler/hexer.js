@@ -97,6 +97,7 @@ export default class LytopixASMHexer {
                 }
             }
             console.log('BYTES', this.BYTES);
+            resolve(this.BYTES);
         });
     }
 }
