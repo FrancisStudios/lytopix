@@ -102,7 +102,22 @@ export default class LytopixASMHexer {
                         && /^st[axy]$/.test(target.verb)
                     )
                         ? target : false:
-                    
+                        switch (target.verb) {
+                            case 'sta':
+                                this.BYTES += ` ${this.byteFormat(BYTE_DICTIONARY.STORE_ACCUMULATOR.hex[0])}`
+                                break;
+                            case 'stx':
+                                this.BYTES += ` ${this.byteFormat(BYTE_DICTIONARY.STORE_XINDEX.hex[0])}`
+                                break;
+                            case 'sty':
+                                this.BYTES += ` ${this.byteFormat(BYTE_DICTIONARY.STORE_YINDEX.hex[0])}`
+                                break;
+                        }
+                        /* RESOLVE PARAMETERS FOR STA, STX, STY */
+                        this.processAddressOrNumberParameter(target);
+                        this.BYTES += LytopixGenericParameterResolver(
+                            this.byteFormat(target.params[0])
+                        );
 
                         break;
 
