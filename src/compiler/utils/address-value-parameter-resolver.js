@@ -65,12 +65,15 @@ const singleNumberParameter = (_param) => {
     switch (base) {
         case 2:
             hexValue = LytopixMath.binary2Hex(_param);
+            hexValue = LytopixMath.stringBytePadding(hexValue, 4);
             return ` ${hexToStringFormat(hexValue)}`;
 
         case 10:
             hexValue = LytopixMath.decimal2Hex(_param)
-            if (parseInt(_param, 10) <= 4294967295)
+            if (parseInt(_param, 10) <= 4294967295) {
+                hexValue = LytopixMath.stringBytePadding(hexValue, 4);
                 return ` ${hexToStringFormat(hexValue)}`;
+            }
             else
                 Logger.error(
                     ERROR_TYPES.SEGMENTATION_ERROR,
@@ -80,6 +83,7 @@ const singleNumberParameter = (_param) => {
             break;
 
         case 16:
+            _param = LytopixMath.stringBytePadding(_param, 4);
             return ` ${hexToStringFormat(_param)}`;
 
         /* ERROR HANDLING FOR LARGER THAN FRAME NUMBERS */

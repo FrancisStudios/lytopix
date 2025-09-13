@@ -60,6 +60,7 @@ export default class LytopixASMHexer {
                 const target = _lexedTokenList[i];
 
                 switch (target) {
+
                     /* .start                                                  */
                     case (
                         target.type == TOKEN_TYPES.DIRECTIVE
@@ -70,10 +71,11 @@ export default class LytopixASMHexer {
                         this.BYTES += ` ${this.byteFormat(BYTE_DICTIONARY.START_DIRECTIVE.hex[0])}`;
                         break;
 
+
                     /* lda, ldx, ldy                                           */
                     case (
                         target.type == TOKEN_TYPES.INSTRUCTION
-                        && /^ld[a,x,y]$/.test(target.verb)
+                        && /^ld[axy]$/.test(target.verb)
                     )
                         ? target : false:
                         switch (target.verb) {
@@ -87,12 +89,20 @@ export default class LytopixASMHexer {
                                 this.BYTES += ` ${this.byteFormat(BYTE_DICTIONARY.LOAD_YINDEX.hex[0])}`;
                                 break;
                         }
-
                         /* RESOLVE PARAMETERS FOR LDA, LDX, LDY */
                         this.processAddressOrNumberParameter(target);
                         this.BYTES += LytopixGenericParameterResolver(
                             this.byteFormat(target.params[0])
                         );
+                        break;
+
+                    /* sta, stx, sty                                           */
+                    case (
+                        target.type == TOKEN_TYPES.INSTRUCTION
+                        && /^st[axy]$/.test(target.verb)
+                    )
+                        ? target : false:
+                    
 
                         break;
 

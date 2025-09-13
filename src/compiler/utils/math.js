@@ -77,7 +77,7 @@ export default class LytopixMath {
     static stringBytePadding = (_hexadecimalNumber, byteSpace) => {
         let leadingZeros
         if ((byteSpace * 2) >= _hexadecimalNumber.length) {
-            const numberOfZerosToAddInFront = (byteSpace * 2) - _hexadecimalNumber.length
+            const numberOfZerosToAddInFront = (byteSpace * 2) - (_hexadecimalNumber.length)
             leadingZeros = '0'.repeat(numberOfZerosToAddInFront);
         } else {
             leadingZeros = '';

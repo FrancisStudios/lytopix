@@ -13,7 +13,7 @@ const Compiler = LytopixCompiler.getInstance();
 Compiler.compile(`
     .start
                                   ;;non-inline comment
-            lda 4294967295      
+            lda $ffe1ffe4     
             sta $00000001         ;;inline comment
             rts
                                 ;;
