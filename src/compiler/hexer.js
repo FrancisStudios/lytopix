@@ -32,6 +32,27 @@ export default class LytopixASMHexer {
         return output
     }
 
+    /**
+     * If target.params[0] is an actual number or address
+     * it will process it differently and add address byte if needed
+     * @param {String<Parameter>} target 
+     * @param {Number<Index>} nthParameter - previously target.params[0]
+     */
+    processAddressOrNumberParameter = (target, nthParameter = 0) => {
+        /* Resolve if Parameter is an actual number */
+        const processActualNumberParameter = (parameter) => {
+            target.params[nthParameter] = parameter.replace('#', '')
+        }
+
+        const processAddressNumberParameter = () => {
+            this.BYTES += ` ${this.byteFormat(BYTE_DICTIONARY.ADDRESS_SIGNATURE.hex[0])}`;
+        }
+
+        /^#[%$0-9a-fA-F][0-9a-fA-F]+$/.test(target.params[nthParameter])
+            ? processActualNumberParameter(target.params[nthParameter])
+            : processAddressNumberParameter();
+    }
+
     /* Builds hexadecimal map like 01 1a 1b and so forth */
     hex = (_lexedTokenList) => {
         return new Promise((resolve, reject) => {
@@ -67,23 +88,10 @@ export default class LytopixASMHexer {
                                 break;
                         }
 
-                        /* Resolve if Parameter is an actual number */
-                        const processActualNumberParameter = (parameter) => {
-                            target.params[0] = parameter.replace('#', '')
-                        }
-
-                        const processAddressNumberParameter = (parameter) => {
-                            this.BYTES += ` ${this.byteFormat(BYTE_DICTIONARY.ADDRESS_SIGNATURE.hex[0])}`;
-                        }
-
-                        /^#[%$0-9a-fA-F][0-9a-fA-F]+$/.test(target.params[0])
-                            ? processActualNumberParameter(target.params[0])
-                            : processAddressNumberParameter(target.params[0]);
-
-                        
-                        /* Resolve Parameter Numerical Value */
+                        /* RESOLVE PARAMETERS FOR LDA, LDX, LDY */
+                        this.processAddressOrNumberParameter(target);
                         this.BYTES += LytopixGenericParameterResolver(
-                            this.byteFormat(target.params[0]) // TODO
+                            this.byteFormat(target.params[0])
                         );
 
                         break;
