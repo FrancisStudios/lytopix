@@ -69,11 +69,19 @@ const singleNumberParameter = (_param) => {
 
         case 10:
             hexValue = LytopixMath.decimal2Hex(_param)
-            return ` ${hexToStringFormat(hexValue)}`;
+            if (parseInt(_param, 10) <= 4294967295)
+                return ` ${hexToStringFormat(hexValue)}`;
+            else
+                Logger.error(
+                    ERROR_TYPES.SEGMENTATION_ERROR,
+                    ERROR_LOCATIONS.PARAM_RESOLVER_GENERIC,
+                    'Decimal number is larger than 0xffffffff - can not fit in frame'
+                );
+            break;
 
         case 16:
             return ` ${hexToStringFormat(_param)}`;
-            
+
         /* ERROR HANDLING FOR LARGER THAN FRAME NUMBERS */
         case 0:
             Logger.error(

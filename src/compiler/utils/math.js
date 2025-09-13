@@ -23,7 +23,7 @@ export default class LytopixMath {
             case /^%[01]{0,32}$/.test(_number) ? _number : false:
                 return 2;
 
-            case /^-?(?:0|[1-9]\d{0,9})$/.test(_number) ? _number : false:
+            case /^(?:0|[1-9]\d{0,9})$/.test(_number) ? _number : false:
                 return 10;
 
             case /^[$]{1}[0123456789abcdefABCDEF]{0,8}$/.test(_number) ? _number : false:
@@ -46,7 +46,8 @@ export default class LytopixMath {
                 ERROR_LOCATIONS.MATH,
                 'Can not parse input number as decimal'
             );
-        return _number.toString(16);
+        return parseInt(_number, 10)
+            .toString(16);
     }
 
     /**
@@ -55,18 +56,34 @@ export default class LytopixMath {
     * @returns {String<Number<Bin>>} 
     */
     static binary2Hex = (_number) => {
-        if (!/^[01]+$/.test(_number))
+        const _bin = _number
+            .replace('%', '')
+            .trim();
+
+        if (!/^[01]+$/.test(_bin))
             Logger.error(
                 ERROR_TYPES.MATH_ERROR,
                 ERROR_LOCATIONS.MATH,
                 'Can not parse input number as binary'
             );
 
-        return parseInt(_number, 2).toString(16);
+        const hexadecimal = parseInt(_bin, 2).toString(16);
+        const Hex4ByteSpace = LytopixMath
+            .stringBytePadding(hexadecimal, 4);
+
+        return Hex4ByteSpace;
     }
 
     static stringBytePadding = (_hexadecimalNumber, byteSpace) => {
+        let leadingZeros
+        if ((byteSpace * 2) >= _hexadecimalNumber.length) {
+            const numberOfZerosToAddInFront = (byteSpace * 2) - _hexadecimalNumber.length
+            leadingZeros = '0'.repeat(numberOfZerosToAddInFront);
+        } else {
+            leadingZeros = '';
+        }
 
+        return `${leadingZeros}${_hexadecimalNumber}`;
     }
 
     /**
