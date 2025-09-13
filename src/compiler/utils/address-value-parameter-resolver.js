@@ -60,23 +60,28 @@ const LytopixGenericParameterResolver = (_param_) => {
  */
 const singleNumberParameter = (_param) => {
     const base = LytopixMath.figureOutBaseSystem(_param);
+    let hexValue;
+
     switch (base) {
+        case 2:
+            hexValue = LytopixMath.binary2Hex(_param);
+            return ` ${hexToStringFormat(hexValue)}`;
+
+        case 10:
+            hexValue = LytopixMath.decimal2Hex(_param)
+            return ` ${hexToStringFormat(hexValue)}`;
+
+        case 16:
+            return ` ${hexToStringFormat(_param)}`;
+            
+        /* ERROR HANDLING FOR LARGER THAN FRAME NUMBERS */
         case 0:
-            /* BASE SYSTEM DETERMINATION ERROR CASE */
             Logger.error(
                 ERROR_TYPES.MATH_ERROR,
                 ERROR_LOCATIONS.PARAM_RESOLVER_GENERIC,
                 `Base system determination error - wrong numerical signature or value exceeds the 4 byte frame!`
             )
             break;
-        case 2: // CONTINUE HERE NEXT TIME - math.js
-            break;
-
-        case 10: // CONTINUE HERE NEXT TIME - math.js
-            break;
-
-        case 16:
-            return ` ${hexToStringFormat(_param)}`;
     }
 }
 

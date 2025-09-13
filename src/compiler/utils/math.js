@@ -40,6 +40,12 @@ export default class LytopixMath {
      * @returns {String<Number<Hex>>} 
      */
     static decimal2Hex = (_number) => {
+        if (!/^[0123456789]+$/.test(_number))
+            Logger.error(
+                ERROR_TYPES.MATH_ERROR,
+                ERROR_LOCATIONS.MATH,
+                'Can not parse input number as decimal'
+            );
         return _number.toString(16);
     }
 
@@ -53,7 +59,8 @@ export default class LytopixMath {
             Logger.error(
                 ERROR_TYPES.MATH_ERROR,
                 ERROR_LOCATIONS.MATH,
-                'can not parse input number as binary');
+                'Can not parse input number as binary'
+            );
 
         return parseInt(_number, 2).toString(16);
     }
