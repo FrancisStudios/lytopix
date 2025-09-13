@@ -25,6 +25,6 @@ export default class LytopixLogger {
     }
 
     error = (ERROR_TYPE, ERROR_LOCATION, MESSAGE) => {
-        console.error(MESSAGE);
+        console.error(`COMPILATION ERROR: ${ERROR_TYPE} in ${ERROR_LOCATION}. ${MESSAGE}`);
     }
 }

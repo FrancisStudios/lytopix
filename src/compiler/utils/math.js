@@ -5,7 +5,7 @@
  * ©2025 Francis Studios Softwares by L.
 */
 
-import { ERROR_LOCATIONS, ERROR_TYPES } from "../ENUM";
+import { ERROR_LOCATIONS, ERROR_TYPES } from "../ENUM.js";
 import LytopixLogger from "./logger.js";
 
 const Logger = LytopixLogger.getInstance();
@@ -32,7 +32,6 @@ export default class LytopixMath {
             default:
                 return 0;   // ERROR CASE
         }
-
     }
 
     /**
@@ -57,5 +56,19 @@ export default class LytopixMath {
                 'can not parse input number as binary');
 
         return parseInt(_number, 2).toString(16);
+    }
+
+    static stringBytePadding = (_hexadecimalNumber, byteSpace) => {
+
+    }
+
+    /**
+     * Checks if hexadecimal number | string<number> can fit 
+     * into a four byte frame
+     * @param {String<NumberHex>} _number 
+     * @returns {Boolean}
+     */
+    static isFourBytes = (_number) => {
+        return _number.length <= 8;
     }
 }

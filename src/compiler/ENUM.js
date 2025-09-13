@@ -33,7 +33,8 @@ const REGISTERS = {
 const ERROR_TYPES = {
     INVALID_TOKEN: 'invalid token',
     INVALID_PARAM: 'invalid parameter',
-    MATH_ERROR: 'math error'
+    MATH_ERROR: 'math error',
+    SEGMENTATION_ERROR: 'segmentation error'
 }
 
 const ERROR_LOCATIONS = {

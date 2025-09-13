@@ -27,36 +27,48 @@ const hexToStringFormat = (_input) => {
 /**
  * Receives a parameter as a string of '$0ef10000' or composite  '$0ef10000 + $0ba1034f0'
  * can be hexadecimal or decimal or binary (only these systems are supported by Lytopix)
- * @param {Param<Instruction>} _parameters 
+ * @param {Param<Instruction>} _param_ 
  * @returns {String<HexadecimalUnit32>}
  */
-const LytopixGenericParameterResolver = (_parameters) => {
+const LytopixGenericParameterResolver = (_param_) => {
 
-    switch (_parameters) {
-        case /[0123456789abcdef$%]+[+ -]+[0123456789abcdef$%]+/.test(_parameters)
-            ? _parameters : false:
+    switch (_param_) {
+        case /[0123456789abcdef$%]+[+ -]+[0123456789abcdef$%]+/.test(_param_)
+            ? _param_ : false:
             // composite
             break;
 
-        case /^[0123456789abcdef$%]+$/.test(_parameters) ? _parameters : false:
-            return singleNumberParameter(_parameters);
+        case /^[0123456789abcdef$%]+$/.test(_param_) ? _param_ : false:
+            return singleNumberParameter(_param_);
 
         default:
             Logger.error(
                 ERROR_TYPES.INVALID_PARAM,
                 ERROR_LOCATIONS.PARAM_RESOLVER_GENERIC,
-                `trying to resolve ${_parameters} but can not process as a single or composite parameter!`
+                `Trying to resolve ${_param_} but can not process as a single or composite parameter!`
             );
             break;
     }
 
 }
 
+/**
+ * Gets a single number parameter from an instruction like xxx #$ff00ff00 or
+ * xxx $ff00ff00 -> and processes the bytes into -> ff 00 ff 00 format
+ * @param {String<Number>} _param 
+ * @returns {String<FormattedHex>} 
+ */
 const singleNumberParameter = (_param) => {
     const base = LytopixMath.figureOutBaseSystem(_param);
-    console.log(base, _param)
-
     switch (base) {
+        case 0:
+            /* BASE SYSTEM DETERMINATION ERROR CASE */
+            Logger.error(
+                ERROR_TYPES.MATH_ERROR,
+                ERROR_LOCATIONS.PARAM_RESOLVER_GENERIC,
+                `Base system determination error - wrong numerical signature or value exceeds the 4 byte frame!`
+            )
+            break;
         case 2: // CONTINUE HERE NEXT TIME - math.js
             break;
 
