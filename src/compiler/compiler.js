@@ -19,7 +19,14 @@ export default class LytopixCompiler {
         return this.instance;
     }
 
-    compile = (_asm_source) => {
+    /**
+     * The external output of the compiler - expects an asm source
+     * and returns a file or a string of bytes as an artifact
+     * @param {String<ASM>} _asm_source 
+     * @param {String<FilePath>} fileOutput 
+     * @returns 
+     */
+    compile = (_asm_source, fileOutput = false) => {
         return new Promise(
             async (r, _) => {
                 const HEXER = LytopixASMHexer.getInstance();
@@ -28,6 +35,8 @@ export default class LytopixCompiler {
                 const syntaxWeb = await LytopixCommentExcluder(syntaxWebWithComments);
                 const lexedTokenList = await LytopixASMLexer.tokenize(syntaxWeb);
                 const hexadecimalFile = await HEXER.hex(lexedTokenList);
+
+                if (!fileOutput) r(hexadecimalFile);
             }
         );
     }

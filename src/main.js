@@ -9,12 +9,19 @@ import LytopixCompiler from "./compiler/compiler.js";
 
 const Compiler = LytopixCompiler.getInstance();
 
+const main = async () => {
+    const BYTES = await Compiler.compile(`
+                            .start
+                                                        ;;non-inline comment
+                                    lda #$ffe1ffe4     
+                                    sta $00000001         ;;inline comment
+                                    rts
+                                                        ;;
+                        `);
 
-Compiler.compile(`
-    .start
-                                  ;;non-inline comment
-            lda $ffe1ffe4     
-            sta $00000001         ;;inline comment
-            rts
-                                ;;
-    `)
+    console.log(BYTES);
+
+}
+
+
+main();

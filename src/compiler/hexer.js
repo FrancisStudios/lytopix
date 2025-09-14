@@ -43,6 +43,7 @@ export default class LytopixASMHexer {
         /* Resolve if Parameter is an actual number */
         const processActualNumberParameter = (parameter) => {
             target.params[nthParameter] = parameter.replace('#', '')
+            this.BYTES += ` ${this.byteFormat(BYTE_DICTIONARY.NIL.hex[0])}`;
         }
 
         const processAddressNumberParameter = () => {
@@ -142,7 +143,6 @@ export default class LytopixASMHexer {
                         break;
                 }
             }
-            console.log('BYTES', this.BYTES);
             resolve(this.BYTES);
         });
     }
