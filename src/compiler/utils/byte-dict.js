@@ -7,7 +7,7 @@
 
 const BYTE_DICTIONARY = {
     START_DIRECTIVE: { symbol: '.start', hex: [0x01], space: 1 },
-    RETURN_FROM_SUB: { symbol: 'rts', hex: ['xx'], space: 1 }, // TODO: this should be replaced by a jump to an engine defined address or back to caller
+    END_PROGRAM: { symbol: 'rts', hex: [0x19], space: 1 },
     LOAD_ACCUMULATOR: { symbol: 'lda', hex: [0x11], space: 5 }, // 1byte is the instruction and \
     LOAD_XINDEX: { symbol: 'ldx', hex: [0x12], space: 5 },      // 4 bytes of data can be as parameter (address or exact value) \
     LOAD_YINDEX: { symbol: 'ldy', hex: [0x13], space: 5 },      // (address or exact value)

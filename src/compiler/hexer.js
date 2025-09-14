@@ -14,6 +14,7 @@ export default class LytopixASMHexer {
     instance
     BYTES = '00'
     logger = LytopixLogger.getInstance();
+    subroutineHistory = [];
 
     static getInstance = () => {
         if (!this.instance) this.instance = new LytopixASMHexer();
@@ -96,6 +97,7 @@ export default class LytopixASMHexer {
                         );
                         break;
 
+
                     /* sta, stx, sty                                           */
                     case (
                         target.type == TOKEN_TYPES.INSTRUCTION
@@ -104,13 +106,13 @@ export default class LytopixASMHexer {
                         ? target : false:
                         switch (target.verb) {
                             case 'sta':
-                                this.BYTES += ` ${this.byteFormat(BYTE_DICTIONARY.STORE_ACCUMULATOR.hex[0])}`
+                                this.BYTES += ` ${this.byteFormat(BYTE_DICTIONARY.STORE_ACCUMULATOR.hex[0])}`;
                                 break;
                             case 'stx':
-                                this.BYTES += ` ${this.byteFormat(BYTE_DICTIONARY.STORE_XINDEX.hex[0])}`
+                                this.BYTES += ` ${this.byteFormat(BYTE_DICTIONARY.STORE_XINDEX.hex[0])}`;
                                 break;
                             case 'sty':
-                                this.BYTES += ` ${this.byteFormat(BYTE_DICTIONARY.STORE_YINDEX.hex[0])}`
+                                this.BYTES += ` ${this.byteFormat(BYTE_DICTIONARY.STORE_YINDEX.hex[0])}`;
                                 break;
                         }
                         /* RESOLVE PARAMETERS FOR STA, STX, STY */
@@ -118,6 +120,17 @@ export default class LytopixASMHexer {
                         this.BYTES += LytopixGenericParameterResolver(
                             this.byteFormat(target.params[0])
                         );
+                        break;
+
+                    /* rts                                                   */
+                    case target.verb == TOKEN_VERBS.RETURN_FROM_SUB ? target : false:
+                        /**
+                         * If there are subroutines we are already in jump to the caller's memory address
+                         * In other ways it should signify the end of the program
+                         *  */
+
+                        if (this.subroutineHistory.length == 0)
+                            this.BYTES += ` ${this.byteFormat(BYTE_DICTIONARY.END_PROGRAM.hex[0])}`;
 
                         break;
 
