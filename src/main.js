@@ -6,6 +6,7 @@
 */
 
 import LytopixCompiler from "./compiler/compiler.js";
+import LytopixFrameTimer from "./runner/frame-timer.js";
 
 const Compiler = LytopixCompiler.getInstance();
 
@@ -22,6 +23,5 @@ const main = async () => {
     console.log(BYTES);
 
 }
-
 
 main();
