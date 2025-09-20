@@ -9,6 +9,7 @@ import LytopixASMLexer from "./lexer.js";
 import LytopixSyntaxizer from "./utils/syntaxizer.js";
 import LytopixCommentExcluder from "./utils/comment.js";
 import LytopixASMHexer from "./hexer.js";
+import hexStringToBytes from "./utils/byte-transformer.js";
 
 export default class LytopixCompiler {
 
@@ -36,7 +37,7 @@ export default class LytopixCompiler {
                 const lexedTokenList = await LytopixASMLexer.tokenize(syntaxWeb);
                 const hexadecimalFile = await HEXER.hex(lexedTokenList);
 
-                if (!fileOutput) r(hexadecimalFile);
+                if (!fileOutput) r(hexStringToBytes(hexadecimalFile));
             }
         );
     }

@@ -41,7 +41,8 @@ const ERROR_LOCATIONS = {
     LEXER: 'lexer',
     HEXER: 'hexer',
     PARAM_RESOLVER_GENERIC: 'generic numerical parameter resolver',
-    MATH: 'lytopix math resolver'
+    MATH: 'lytopix math resolver',
+    BYTE_TRANSFORMER: 'byte transformer'
 }
 
 export {
