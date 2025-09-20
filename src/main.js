@@ -7,8 +7,10 @@
 
 import LytopixCompiler from "./compiler/compiler.js";
 import LytopixFrameTimer from "./runner/frame-timer.js";
+import LytopixRunner from "./runner/run.js";
 
 const Compiler = LytopixCompiler.getInstance();
+const Runner = LytopixRunner.getInstance();
 
 const main = async () => {
     const BYTES = await Compiler.compile(`
@@ -20,7 +22,10 @@ const main = async () => {
                                                         ;;
                         `);
 
+
     console.log(BYTES);
+
+
 
 }
 

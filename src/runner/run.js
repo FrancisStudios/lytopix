@@ -13,7 +13,11 @@ export default class LytopixRunner {
         return this.instance;
     }
 
+    load = (BYTES) => {
+
+    }
+
     run = (BYTES) => {
-        
+
     }
 }
