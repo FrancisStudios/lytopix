@@ -13,8 +13,16 @@ export default class LytopixRunner {
         return this.instance;
     }
 
+    /**
+     * Loads bytes into memory && prepares for 
+     * execution -> next step is running now
+     * @param {String<Bytes>} BYTES 
+     * @returns {Promise<Boolean>}
+     */
     load = (BYTES) => {
-
+        return new Promise((resolve, reject) => {
+            /** TODO: load bytes into memory */
+        });
     }
 
     run = (BYTES) => {
