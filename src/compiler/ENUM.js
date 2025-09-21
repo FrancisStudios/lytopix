@@ -45,10 +45,15 @@ const ERROR_LOCATIONS = {
     BYTE_TRANSFORMER: 'byte transformer'
 }
 
+const CONSTANTS = {
+    SCREEN_MEMORY_SIZE_BYTES : 1228800,
+}
+
 export {
     TOKEN_TYPES,
     TOKEN_VERBS,
     REGISTERS,
     ERROR_TYPES,
-    ERROR_LOCATIONS
+    ERROR_LOCATIONS,
+    CONSTANTS
 }
