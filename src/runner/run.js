@@ -7,6 +7,7 @@
 
 export default class LytopixRunner {
     instance
+    memory = [];
 
     static getInstance = () => {
         if (!this.instance) this.instance = new LytopixRunner();
@@ -22,6 +23,18 @@ export default class LytopixRunner {
     load = (BYTES) => {
         return new Promise((resolve, reject) => {
             /** TODO: load bytes into memory */
+             const computedMaxAddress = 1228800; //TODO: precalculate necessary space for program and other variables
+
+            /** RESERVE SCREEN MEMORY SPACE 1228800 bytes */
+
+            /** RESERVE GENERAL PURPOSE MEMORY SPACE */
+            // TODO: determine necessary size for variables
+
+            /** LOAD PROGRAM INTO MEMORY */
+           
+
+
+
         });
     }
 
