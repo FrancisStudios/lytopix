@@ -24,6 +24,7 @@ export default class LytopixRunner {
      */
     load = (BYTES) => {
         return new Promise((resolve, reject) => {
+            let isLoaded = false;
             /** TODO: load bytes into memory */
             const computedMaxAddress = 1228800; //TODO: precalculate necessary space for program and other variables
 
@@ -31,13 +32,22 @@ export default class LytopixRunner {
             for (let _address = 0; _address < CONSTANTS.SCREEN_MEMORY_SIZE_BYTES; _address++) {
                 this.memory.push('00');
             }
-            console.log(this.memory);
             /** RESERVE GENERAL PURPOSE MEMORY SPACE */
             // TODO: determine necessary size for variables
 
             /** LOAD PROGRAM INTO MEMORY */
+            for (
+                let ProgrramCounterForLoader = 0;
+                ProgrramCounterForLoader <= BYTES.length - 1;
+                ProgrramCounterForLoader++
+            ) {
+                this
+                    .memory
+                    .push(BYTES[ProgrramCounterForLoader]);
+            }
 
-
+            console.log(this.memory);
+            if (isLoaded) resolve(isLoaded);
         });
     }
 
