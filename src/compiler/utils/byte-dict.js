@@ -15,7 +15,8 @@ const BYTE_DICTIONARY = {
     STORE_ACCUMULATOR: { symbol: 'sta', hex: [0x1c], space: 5 },
     STORE_XINDEX: { symbol: 'stx', hex: [0x1d], space: 5 },
     STORE_YINDEX: { symbol: 'sty', hex: [0x1e], space: 5 },
-    ADDRESS_SIGNATURE: { symbol: '!#', hex: [0xa9], space: 1 } // If parameter is not an actual number but an address
+    ADDRESS_SIGNATURE: { symbol: '!#', hex: [0xa9], space: 1 }, // If parameter is not an actual number but an address
+    SPACE_ALLOCATOR_SIGNAL: { symbol: '$#', hex: [0x20], space: 5 }
 }
 
 export default BYTE_DICTIONARY;

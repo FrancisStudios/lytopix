@@ -15,6 +15,7 @@ export default class LytopixASMHexer {
     BYTES = '00'
     logger = LytopixLogger.getInstance();
     subroutineHistory = [];
+    variablesAllocatedBytespace = 0;
 
     static getInstance = () => {
         if (!this.instance) this.instance = new LytopixASMHexer();
@@ -116,11 +117,27 @@ export default class LytopixASMHexer {
                                 this.BYTES += ` ${this.byteFormat(BYTE_DICTIONARY.STORE_YINDEX.hex[0])}`;
                                 break;
                         }
+
+                        /*TRANSFORM PARAMETER INTO HEXADECIMAL AND BYTE FORMAT*/
+                        const paramValueInHexByteFormat = LytopixGenericParameterResolver(
+                            this
+                                .byteFormat(target.params[0])
+                        );
+
                         /* RESOLVE PARAMETERS FOR STA, STX, STY */
                         this.processAddressOrNumberParameter(target);
-                        this.BYTES += LytopixGenericParameterResolver(
-                            this.byteFormat(target.params[0])
+                        this.BYTES += paramValueInHexByteFormat;
+
+                        /* SEE IF STORED IN A NEW VARIABLE SPACE */
+                        const _addressValue = parseInt(
+                            paramValueInHexByteFormat
+                                .replace(/\s/g, ''), 16
                         );
+
+                        //Exception if screen memory - already allocated
+                        if (_addressValue <= 0x12c000) 
+                            this.variablesAllocatedBytespace += 0x04;
+
                         break;
 
                     /* rts                                                   */
@@ -143,6 +160,12 @@ export default class LytopixASMHexer {
                         break;
                 }
             }
+
+            if(this.variablesAllocatedBytespace > 0){
+                // TODO:
+               // this.BYTES = `${BYTE_DICTIONARY.SPACE_ALLOCATOR_SIGNAL.hex[0]} 00 00 00 04 ${this.BYTES}`;
+            }
+
             resolve(this.BYTES);
         });
     }
