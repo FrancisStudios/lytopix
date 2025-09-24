@@ -47,6 +47,7 @@ const ERROR_LOCATIONS = {
 
 const CONSTANTS = {
     SCREEN_MEMORY_SIZE_BYTES : 1228800,
+    MEMORY_PREALLOCATOR: '#memory_preallocator#'
 }
 
 export {

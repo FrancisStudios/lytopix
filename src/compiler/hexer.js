@@ -5,7 +5,7 @@
  * ©2025 Francis Studios Softwares by L.
 */
 
-import { ERROR_LOCATIONS, ERROR_TYPES, TOKEN_TYPES, TOKEN_VERBS } from "./ENUM.js";
+import { CONSTANTS, ERROR_LOCATIONS, ERROR_TYPES, TOKEN_TYPES, TOKEN_VERBS } from "./ENUM.js";
 import LytopixGenericParameterResolver from "./utils/address-value-parameter-resolver.js";
 import BYTE_DICTIONARY from "./utils/byte-dict.js";
 import LytopixLogger from "./utils/logger.js";
@@ -59,6 +59,12 @@ export default class LytopixASMHexer {
     /* Builds hexadecimal map like 01 1a 1b and so forth */
     hex = (_lexedTokenList) => {
         return new Promise((resolve, reject) => {
+
+            /* Allocate space in BYTES for Variable Allocation In The End */
+            this.BYTES += ` ${this.byteFormat(BYTE_DICTIONARY.SPACE_ALLOCATOR_SIGNAL.hex[0])}`;
+            this.BYTES += ` ${CONSTANTS.MEMORY_PREALLOCATOR}`;
+
+            /* Instruction hexing <MainProcess> */
             for (let i = 0; i <= _lexedTokenList.length - 1; i++) {
                 const target = _lexedTokenList[i];
 
@@ -128,14 +134,14 @@ export default class LytopixASMHexer {
                         this.processAddressOrNumberParameter(target);
                         this.BYTES += paramValueInHexByteFormat;
 
-                        /* SEE IF STORED IN A NEW VARIABLE SPACE */
+                        /* SEE IF NEW VARIABLE WAS CREATED (STA DOES NOT STORE IN SCR MEM) */
                         const _addressValue = parseInt(
                             paramValueInHexByteFormat
                                 .replace(/\s/g, ''), 16
                         );
 
                         //Exception if screen memory - already allocated
-                        if (_addressValue <= 0x12c000) 
+                        if (_addressValue <= 0x12c000)
                             this.variablesAllocatedBytespace += 0x04;
 
                         break;
@@ -161,10 +167,13 @@ export default class LytopixASMHexer {
                 }
             }
 
-            if(this.variablesAllocatedBytespace > 0){
-                // TODO:
-               // this.BYTES = `${BYTE_DICTIONARY.SPACE_ALLOCATOR_SIGNAL.hex[0]} 00 00 00 04 ${this.BYTES}`;
-            }
+            /* After we know how many variables we created, fill in the blanks */
+            this.BYTES = this.BYTES.replace(
+                CONSTANTS.MEMORY_PREALLOCATOR,
+                this.byteFormat(this.variablesAllocatedBytespace) // TODO: SPACE IT UP TO 4 bytes
+            );
+
+            console.log(this.BYTES)
 
             resolve(this.BYTES);
         });
