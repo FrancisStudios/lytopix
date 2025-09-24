@@ -173,8 +173,6 @@ export default class LytopixASMHexer {
                 this.byteFormat(this.variablesAllocatedBytespace) // TODO: SPACE IT UP TO 4 bytes
             );
 
-            console.log(this.BYTES)
-
             resolve(this.BYTES);
         });
     }
