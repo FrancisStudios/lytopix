@@ -9,6 +9,7 @@ import { CONSTANTS, ERROR_LOCATIONS, ERROR_TYPES, TOKEN_TYPES, TOKEN_VERBS } fro
 import LytopixGenericParameterResolver from "./utils/address-value-parameter-resolver.js";
 import BYTE_DICTIONARY from "./utils/byte-dict.js";
 import LytopixLogger from "./utils/logger.js";
+import LytopixMath from "./utils/math.js";
 
 export default class LytopixASMHexer {
     instance
@@ -24,13 +25,20 @@ export default class LytopixASMHexer {
 
     constructor() { }
 
-    /* Formats bytes to two spaces like 1 -> 01 */
+    /* Formats bytes to two spaces like 1 -> 01       */
+    /* Now it breaks up more bytes like 0001 -> 00 01 */
     byteFormat = (byte) => {
         let output;
-        byte = byte.toString(16)
-        byte.length == 1
-            ? output = `0${byte}`
-            : output = byte
+        if (byte.length <= 2) {
+            byte = byte.toString(16)
+            byte.length == 1
+                ? output = `0${byte}`
+                : output = byte
+        } else {
+            for (let i = 0; i <= byte.length; i++) {
+                //TODO
+            }
+        }
         return output
     }
 
@@ -172,6 +180,10 @@ export default class LytopixASMHexer {
                 CONSTANTS.MEMORY_PREALLOCATOR,
                 this.byteFormat(this.variablesAllocatedBytespace) // TODO: SPACE IT UP TO 4 bytes
             );
+
+            const fourByteFormat = LytopixMath.stringBytePadding(this.byteFormat(this.variablesAllocatedBytespace), 4);
+
+            console.log(fourByteFormat);
 
             resolve(this.BYTES);
         });
