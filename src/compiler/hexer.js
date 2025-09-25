@@ -25,21 +25,38 @@ export default class LytopixASMHexer {
 
     constructor() { }
 
-    /* Formats bytes to two spaces like 1 -> 01       */
-    /* Now it breaks up more bytes like 0001 -> 00 01 */
+    /* Formats bytes to two spaces like 1 -> 01 */
     byteFormat = (byte) => {
         let output;
-        if (byte.length <= 2) {
-            byte = byte.toString(16)
-            byte.length == 1
-                ? output = `0${byte}`
-                : output = byte
-        } else {
-            for (let i = 0; i <= byte.length; i++) {
-                //TODO
-            }
-        }
+        byte = byte.toString(16)
+        byte.length == 1
+            ? output = `0${byte}`
+            : output = byte
         return output
+    }
+
+    /* Formats hex numbers into byte formats */
+    byteFormatLong = (bytes) => {
+        let output = '';
+
+        if (bytes.length % 2 !== 0) {
+            this.logger
+                .error(
+                    ERROR_TYPES.MATH_ERROR,
+                    ERROR_LOCATIONS.HEXER,
+                    'Can not use byteFormatLong for non byte structured data!'
+                );
+            return;
+        }
+
+        for (let i = 0; i < bytes.length; i++) {
+            const byte = bytes[i];
+
+            i % 2 == 0 && i !== 0
+                ? output += ` ${byte}`
+                : output += byte
+        }
+        return output;
     }
 
     /**
@@ -178,13 +195,14 @@ export default class LytopixASMHexer {
             /* After we know how many variables we created, fill in the blanks */
             this.BYTES = this.BYTES.replace(
                 CONSTANTS.MEMORY_PREALLOCATOR,
-                this.byteFormat(this.variablesAllocatedBytespace) // TODO: SPACE IT UP TO 4 bytes
+                this.byteFormatLong(
+                    LytopixMath.stringBytePadding(
+                        this.byteFormat(this.variablesAllocatedBytespace),
+                        4
+                    )
+                )
             );
-
-            const fourByteFormat = LytopixMath.stringBytePadding(this.byteFormat(this.variablesAllocatedBytespace), 4);
-
-            console.log(fourByteFormat);
-
+            console.log(this.BYTES);
             resolve(this.BYTES);
         });
     }
