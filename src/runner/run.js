@@ -39,8 +39,14 @@ export default class LytopixRunner {
                 BYTES
                     .indexOf(BYTE_DICTIONARY.SPACE_ALLOCATOR_SIGNAL.hex[0]);
 
-            console.log(spaceAllocatorSignalByteIndex)
-            
+            const _posI = spaceAllocatorSignalByteIndex;
+            const memoryToBeReservedInBytes = parseInt(
+                `${BYTES[_posI + 1]}${BYTES[_posI + 2]}${BYTES[_posI + 3]}${BYTES[_posI + 4]}`,
+                10
+            ); // TODO: continue from here
+
+            console.log(memoryToBeReservedInBytes);
+
             /** LOAD PROGRAM INTO MEMORY */
             for (
                 let ProgrramCounterForLoader = 0;
