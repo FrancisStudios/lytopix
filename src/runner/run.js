@@ -6,6 +6,7 @@
 */
 
 import { CONSTANTS } from "../compiler/ENUM.js"; // FOREIGN IMPORT
+import BYTE_DICTIONARY from "../compiler/utils/byte-dict.js";
 
 export default class LytopixRunner {
     instance
@@ -34,7 +35,12 @@ export default class LytopixRunner {
             }
             /** RESERVE GENERAL PURPOSE MEMORY SPACE */
             // TODO: determine necessary size for variables
+            const spaceAllocatorSignalByteIndex =
+                BYTES
+                    .indexOf(BYTE_DICTIONARY.SPACE_ALLOCATOR_SIGNAL.hex[0]);
 
+            console.log(spaceAllocatorSignalByteIndex)
+            
             /** LOAD PROGRAM INTO MEMORY */
             for (
                 let ProgrramCounterForLoader = 0;
