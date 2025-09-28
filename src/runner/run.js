@@ -31,7 +31,7 @@ export default class LytopixRunner {
 
             /** RESERVE SCREEN MEMORY SPACE 1228800 bytes */
             for (let _address = 0; _address < CONSTANTS.SCREEN_MEMORY_SIZE_BYTES; _address++) {
-                this.memory.push('00');
+                this.memory.push(0x00);
             }
             /** RESERVE GENERAL PURPOSE MEMORY SPACE */
             // TODO: determine necessary size for variables
@@ -44,6 +44,8 @@ export default class LytopixRunner {
                 `${BYTES[_posI + 1]}${BYTES[_posI + 2]}${BYTES[_posI + 3]}${BYTES[_posI + 4]}`,
                 10
             ); // TODO: continue from here
+
+            console.log(this.memory)
 
             console.log(memoryToBeReservedInBytes);
 
