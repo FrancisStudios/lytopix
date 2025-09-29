@@ -1,2 +1,2 @@
-[*] Reserve memory for variables
+[*] Reserve memory for variables (run.js 52  - doesn't work yet)
 [] Check variables and warn user if using vars out of memory or invalid spaces.

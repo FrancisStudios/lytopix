@@ -26,28 +26,30 @@ export default class LytopixRunner {
     load = (BYTES) => {
         return new Promise((resolve, reject) => {
             let isLoaded = false;
-            /** TODO: load bytes into memory */
-            const computedMaxAddress = 1228800; //TODO: precalculate necessary space for program and other variables
 
             /** RESERVE SCREEN MEMORY SPACE 1228800 bytes */
             for (let _address = 0; _address < CONSTANTS.SCREEN_MEMORY_SIZE_BYTES; _address++) {
                 this.memory.push(0x00);
             }
+
             /** RESERVE GENERAL PURPOSE MEMORY SPACE */
-            // TODO: determine necessary size for variables
             const spaceAllocatorSignalByteIndex =
                 BYTES
                     .indexOf(BYTE_DICTIONARY.SPACE_ALLOCATOR_SIGNAL.hex[0]);
 
             const _posI = spaceAllocatorSignalByteIndex;
+
             const memoryToBeReservedInBytes = parseInt(
                 `${BYTES[_posI + 1]}${BYTES[_posI + 2]}${BYTES[_posI + 3]}${BYTES[_posI + 4]}`,
                 10
-            ); // TODO: continue from here
+            );
 
-            console.log(this.memory)
+            for (let _v_allocator = 0; _v_allocator == memoryToBeReservedInBytes; _v_allocator++) {
+                this
+                    .BYTES.push('help');
+            }
 
-            console.log(memoryToBeReservedInBytes);
+            // TODO: continue here
 
             /** LOAD PROGRAM INTO MEMORY */
             for (
