@@ -1,0 +1,2 @@
+[*] Reserve memory for variables
+[] Check variables and warn user if using vars out of memory or invalid spaces.
