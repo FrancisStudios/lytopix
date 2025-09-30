@@ -1,2 +1,3 @@
 [x] Reserve memory for variables (run.js 52  - doesn't work yet)
+[*] Check example code if we can run it ld[axy] and st[axy] shold work in runner!
 [] Check variables and warn user if using vars out of memory or invalid spaces.
