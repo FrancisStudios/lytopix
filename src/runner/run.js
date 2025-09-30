@@ -22,6 +22,7 @@ export default class LytopixRunner {
      * execution -> next step is running now
      * @param {String<Bytes>} BYTES 
      * @returns {Promise<Boolean>}
+     * benne vagyok Endre :D
      */
     load = (BYTES) => {
         return new Promise((resolve, reject) => {
@@ -46,10 +47,8 @@ export default class LytopixRunner {
 
             for (let _v_allocator = 0; _v_allocator == memoryToBeReservedInBytes; _v_allocator++) {
                 this
-                    .BYTES.push('help');
+                    .memory.push(0x00);
             }
-
-            // TODO: continue here
 
             /** LOAD PROGRAM INTO MEMORY */
             for (
