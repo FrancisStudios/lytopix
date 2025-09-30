@@ -17,7 +17,7 @@ const main = async () => {
                             .start
                                                         ;;non-inline comment
                                     lda #$ffe1ffe4     
-                                    sta $00000001         ;;inline comment
+                                    sta $12C001         ;;inline comment
                                     rts
                                                         ;;
                         `);
