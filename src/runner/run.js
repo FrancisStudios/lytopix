@@ -61,12 +61,16 @@ export default class LytopixRunner {
                     .push(BYTES[ProgrramCounterForLoader]);
             }
 
-            console.log(this.memory);
-            if (isLoaded) resolve(isLoaded);
+            resolve(true);
         });
     }
 
-    run = (BYTES) => {
-
+    run = () => {
+        return new Promise((resolve, reject) => {
+            if (this.memory && this.memory.length > CONSTANTS.SCREEN_MEMORY_SIZE_BYTES) {
+                console.log(this.memory);
+            }
+            resolve(true);
+        });
     }
 }

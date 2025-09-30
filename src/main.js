@@ -24,7 +24,10 @@ const main = async () => {
 
 
     console.log(BYTES);
+
     const codeLoaded = await Runner.load(BYTES);
+
+    if(codeLoaded) await Runner.run();
 
 
 }
