@@ -22,7 +22,7 @@ export default class LytopixRunner {
      * execution -> next step is running now
      * @param {String<Bytes>} BYTES 
      * @returns {Promise<Boolean>}
-     * benne vagyok Endre :D
+     * benne vagyok Endre :D (Sopronból)
      */
     load = (BYTES) => {
         return new Promise((resolve, reject) => {
