@@ -45,7 +45,7 @@ export default class LytopixRunner {
                 10
             );
 
-            for (let _v_allocator = 0; _v_allocator == memoryToBeReservedInBytes; _v_allocator++) {
+            for (let _v_allocator = 0; (_v_allocator < memoryToBeReservedInBytes); _v_allocator++) {
                 this
                     .memory.push(0x00);
             }
