@@ -26,8 +26,6 @@ export default class LytopixRunner {
      */
     load = (BYTES) => {
         return new Promise((resolve, reject) => {
-            let isLoaded = false;
-
             /** RESERVE SCREEN MEMORY SPACE 1228800 bytes */
             for (let _address = 0; _address < CONSTANTS.SCREEN_MEMORY_SIZE_BYTES; _address++) {
                 this.memory.push(0x00);
