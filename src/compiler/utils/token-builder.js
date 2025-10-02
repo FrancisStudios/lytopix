@@ -71,7 +71,8 @@ export default class LytopixTokenBuilder {
         }
         const params = syntax
             .replace(target, '')
-            .trim();
+            .trim()
+            .toLowerCase();
         return {
             type: TOKEN_TYPES.INSTRUCTION,
             verb: target,
@@ -103,8 +104,8 @@ export default class LytopixTokenBuilder {
         }
         const params = syntax
             .replace(verb, '')
-            .trim();
-
+            .trim()
+            .toLowerCase();
         return {
             type: TOKEN_TYPES.INSTRUCTION,
             verb: verb,

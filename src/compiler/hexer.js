@@ -166,7 +166,7 @@ export default class LytopixASMHexer {
                         );
 
                         //Exception if screen memory - already allocated
-                        if (_addressValue <= 0x12c000)
+                        if (_addressValue > 0x12c000)
                             this.variablesAllocatedBytespace += 0x04;
 
                         break;
