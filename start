@@ -1,0 +1,1347 @@
+SYSTEMCTL(1)                                          systemctl                                          SYSTEMCTL(1)
+
+NNAAMMEE
+       systemctl - Control the systemd system and service manager
+
+SSYYNNOOPPSSIISS
+       ssyysstteemmccttll [OPTIONS...] COMMAND [UNIT...]
+
+DDEESSCCRRIIPPTTIIOONN
+       ssyysstteemmccttll may be used to introspect and control the state of the "systemd" system and service manager. Please
+       refer to ssyysstteemmdd(1) for an introduction into the basic concepts and functionality this tool manages.
+
+CCOOMMMMAANNDDSS
+       The following commands are understood:
+
+   UUnniitt CCoommmmaannddss ((IInnttrroossppeeccttiioonn aanndd MMooddiiffiiccaattiioonn))
+       lliisstt--uunniittss [_P_A_T_T_E_R_N...]
+           List units that ssyysstteemmdd currently has in memory. This includes units that are either referenced directly
+           or through a dependency, units that are pinned by applications programmatically, or units that were active
+           in the past and have failed. By default only units which are active, have pending jobs, or have failed are
+           shown; this can be changed with option ----aallll. If one or more _P_A_T_T_E_R_Ns are specified, only units matching
+           one of them are shown. The units that are shown are additionally filtered by ----ttyyppee== and ----ssttaattee== if those
+           options are specified.
+
+           Note that this command does not show unit templates, but only instances of unit templates. Units templates
+           that aren't instantiated are not runnable, and will thus never show up in the output of this command.
+           Specifically this means that foo@.service will never be shown in this list — unless instantiated, e.g. as
+           foo@bar.service. Use lliisstt--uunniitt--ffiilleess (see below) for listing installed unit template files.
+
+           Produces output similar to
+
+                 UNIT                         LOAD   ACTIVE SUB     DESCRIPTION
+                 sys-module-fuse.device       loaded active plugged /sys/module/fuse
+                 -.mount                      loaded active mounted Root Mount
+                 boot-efi.mount               loaded active mounted /boot/efi
+                 systemd-journald.service     loaded active running Journal Service
+                 systemd-logind.service       loaded active running Login Service
+               ● user@1000.service            loaded failed failed  User Manager for UID 1000
+                 ...
+                 systemd-tmpfiles-clean.timer loaded active waiting Daily Cleanup of Temporary Directories
+
+               LOAD   = Reflects whether the unit definition was properly loaded.
+               ACTIVE = The high-level unit activation state, i.e. generalization of SUB.
+               SUB    = The low-level unit activation state, values depend on unit type.
+
+               123 loaded units listed. Pass --all to see loaded but inactive units, too.
+               To show all installed unit files use 'systemctl list-unit-files'.
+
+           The header and the last unit of a given type are underlined if the terminal supports that. A colored dot
+           is shown next to services which were masked, not found, or otherwise failed.
+
+           The LOAD column shows the load state, one of llooaaddeedd, nnoott--ffoouunndd, bbaadd--sseettttiinngg, eerrrroorr, mmaasskkeedd. The ACTIVE
+           columns shows the general unit state, one of aaccttiivvee, rreellooaaddiinngg, iinnaaccttiivvee, ffaaiilleedd, aaccttiivvaattiinngg,
+           ddeeaaccttiivvaattiinngg. The SUB column shows the unit-type-specific detailed state of the unit, possible values vary
+           by unit type. The list of possible LOAD, ACTIVE, and SUB states is not constant and new systemd releases
+           may both add and remove values.
+
+               systemctl --state=help
+
+           command maybe be used to display the current set of possible values.
+
+           This is the default command.
+
+       lliisstt--aauuttoommoouunnttss [_P_A_T_T_E_R_N...]
+           List automount units currently in memory, ordered by mount path. If one or more _P_A_T_T_E_R_Ns are specified,
+           only automount units matching one of them are shown. Produces output similar to
+
+               WHAT        WHERE                    MOUNTED IDLE TIMEOUT UNIT
+               /dev/sdb1   /mnt/test                no      120s         mnt-test.automount
+               binfmt_misc /proc/sys/fs/binfmt_misc yes     0            proc-sys-fs-binfmt_misc.automount
+
+               2 automounts listed.
+
+           Also see ----sshhooww--ttyyppeess, ----aallll, and ----ssttaattee==.
+
+       lliisstt--ssoocckkeettss [_P_A_T_T_E_R_N...]
+           List socket units currently in memory, ordered by listening address. If one or more _P_A_T_T_E_R_Ns are
+           specified, only socket units matching one of them are shown. Produces output similar to
+
+               LISTEN           UNIT                        ACTIVATES
+               /dev/initctl     systemd-initctl.socket      systemd-initctl.service
+               ...
+               [::]:22          sshd.socket                 sshd.service
+               kobject-uevent 1 systemd-udevd-kernel.socket systemd-udevd.service
+
+               5 sockets listed.
+
+           Note: because the addresses might contains spaces, this output is not suitable for programmatic
+           consumption.
+
+           Also see ----sshhooww--ttyyppeess, ----aallll, and ----ssttaattee==.
+
+       lliisstt--ttiimmeerrss [_P_A_T_T_E_R_N...]
+           List timer units currently in memory, ordered by the time they elapse next. If one or more _P_A_T_T_E_R_Ns are
+           specified, only units matching one of them are shown. Produces output similar to
+
+               NEXT                         LEFT          LAST                         PASSED     UNIT                         ACTIVATES
+               -                            -             Thu 2017-02-23 13:40:29 EST  3 days ago ureadahead-stop.timer        ureadahead-stop.service
+               Sun 2017-02-26 18:55:42 EST  1min 14s left Thu 2017-02-23 13:54:44 EST  3 days ago systemd-tmpfiles-clean.timer systemd-tmpfiles-clean.service
+               Sun 2017-02-26 20:37:16 EST  1h 42min left Sun 2017-02-26 11:56:36 EST  6h ago     apt-daily.timer              apt-daily.service
+               Sun 2017-02-26 20:57:49 EST  2h 3min left  Sun 2017-02-26 11:56:36 EST  6h ago     snapd.refresh.timer          snapd.refresh.service
+
+           _N_E_X_T shows the next time the timer will run.
+
+           _L_E_F_T shows how long till the next time the timer runs.
+
+           _L_A_S_T shows the last time the timer ran.
+
+           _P_A_S_S_E_D shows how long has passed since the timer last ran.
+
+           _U_N_I_T shows the name of the timer
+
+           _A_C_T_I_V_A_T_E_S shows the name the service the timer activates when it runs.
+
+           Also see ----aallll and ----ssttaattee==.
+
+       iiss--aaccttiivvee _P_A_T_T_E_R_N......
+           Check whether any of the specified units are active (i.e. running). Returns an exit code 00 if at least one
+           is active, or non-zero otherwise. Unless ----qquuiieett is specified, this will also print the current unit state
+           to standard output.
+
+       iiss--ffaaiilleedd _P_A_T_T_E_R_N......
+           Check whether any of the specified units are in a "failed" state. Returns an exit code 00 if at least one
+           has failed, non-zero otherwise. Unless ----qquuiieett is specified, this will also print the current unit state
+           to standard output.
+
+       ssttaattuuss [_P_A_T_T_E_R_N...|_P_I_D...]]
+           Show runtime status information about the whole system or about one or more units followed by most recent
+           log data from the journal. If no positional arguments are specified, and no unit filter is given with
+           ----ttyyppee==, ----ssttaattee==, or ----ffaaiilleedd, shows the status of the whole system. If combined with ----aallll, follows that
+           with the status of all units. If positional arguments are specified, each positional argument is treated
+           as either a unit name to show, or a glob pattern to show units whose names match that pattern, or a PID to
+           show the unit containing that PID. When ----ttyyppee==, ----ssttaattee==, or ----ffaaiilleedd are used, units are additionally
+           filtered by the TYPE and ACTIVE state.
+
+           This function is intended to generate human-readable output. If you are looking for computer-parsable
+           output, use sshhooww instead. By default, this function only shows 10 lines of output and ellipsizes lines to
+           fit in the terminal window. This can be changed with ----lliinneess and ----ffuullll, see above. In addition,
+           jjoouurrnnaallccttll ----uunniitt==_N_A_M_E or jjoouurrnnaallccttll ----uusseerr--uunniitt==_N_A_M_E use a similar filter for messages and might be more
+           convenient.
+
+           Note that this operation only displays _r_u_n_t_i_m_e status, i.e. information about the current invocation of
+           the unit (if it is running) or the most recent invocation (if it is not running anymore, and has not been
+           released from memory). Information about earlier invocations, invocations from previous system boots, or
+           prior invocations that have already been released from memory may be retrieved via jjoouurrnnaallccttll ----uunniitt==.
+
+           systemd implicitly loads units as necessary, so just running the ssttaattuuss will attempt to load a file. The
+           command is thus not useful for determining if something was already loaded or not. The units may possibly
+           also be quickly unloaded after the operation is completed if there's no reason to keep it in memory
+           thereafter.
+
+           EExxaammppllee 11.. EExxaammppllee oouuttppuutt ffrroomm ssyysstteemmccttll ssttaattuuss
+
+               $ systemctl status bluetooth
+               ● bluetooth.service - Bluetooth service
+                  Loaded: loaded (/lib/systemd/system/bluetooth.service; enabled; preset: enabled)
+                  Active: active (running) since Wed 2017-01-04 13:54:04 EST; 1 weeks 0 days ago
+                    Docs: man:bluetoothd(8)
+                Main PID: 930 (bluetoothd)
+                  Status: "Running"
+                   Tasks: 1
+                  Memory: 648.0K
+                     CPU: 435ms
+                  CGroup: /system.slice/bluetooth.service
+                          └─930 /usr/lib/bluetooth/bluetoothd
+
+               Jan 12 10:46:45 example.com bluetoothd[8900]: Not enough free handles to register service
+               Jan 12 10:46:45 example.com bluetoothd[8900]: Current Time Service could not be registered
+               Jan 12 10:46:45 example.com bluetoothd[8900]: gatt-time-server: Input/output error (5)
+
+           The dot ("●") uses color on supported terminals to summarize the unit state at a glance. Along with its
+           color, its shape varies according to its state: "inactive" or "maintenance" is a white circle ("○"),
+           "active" is a green dot ("●"), "deactivating" is a white dot, "failed" or "error" is a red cross ("×"),
+           and "reloading" is a green clockwise circle arrow ("↻").
+
+           The "Loaded:" line in the output will show "loaded" if the unit has been loaded into memory. Other
+           possible values for "Loaded:" include: "error" if there was a problem loading it, "not-found" if no unit
+           file was found for this unit, "bad-setting" if an essential unit file setting could not be parsed and
+           "masked" if the unit file has been masked. Along with showing the path to the unit file, this line will
+           also show the enablement state. Enabled units are included in the dependency network between units, and
+           thus are started at boot or via some other form of activation. See the full table of possible enablement
+           states — including the definition of "masked" — in the documentation for the iiss--eennaabblleedd command.
+
+           The "Active:" line shows active state. The value is usually "active" or "inactive". Active could mean
+           started, bound, plugged in, etc depending on the unit type. The unit could also be in process of changing
+           states, reporting a state of "activating" or "deactivating". A special "failed" state is entered when the
+           service failed in some way, such as a crash, exiting with an error code or timing out. If the failed state
+           is entered the cause will be logged for later reference.
+
+       sshhooww [_P_A_T_T_E_R_N...|_J_O_B...]
+           Show properties of one or more units, jobs, or the manager itself. If no argument is specified, properties
+           of the manager will be shown. If a unit name is specified, properties of the unit are shown, and if a job
+           ID is specified, properties of the job are shown. By default, empty properties are suppressed. Use ----aallll
+           to show those too. To select specific properties to show, use ----pprrooppeerrttyy==. This command is intended to be
+           used whenever computer-parsable output is required. Use ssttaattuuss if you are looking for formatted
+           human-readable output.
+
+           Many properties shown by ssyysstteemmccttll sshhooww map directly to configuration settings of the system and service
+           manager and its unit files. Note that the properties shown by the command are generally more low-level,
+           normalized versions of the original configuration settings and expose runtime state in addition to
+           configuration. For example, properties shown for service units include the service's current main process
+           identifier as "MainPID" (which is runtime state), and time settings are always exposed as properties
+           ending in the "...USec" suffix even if a matching configuration options end in "...Sec", because
+           microseconds is the normalized time unit used internally by the system and service manager.
+
+           For details about many of these properties, see the documentation of the D-Bus interface backing these
+           properties, see oorrgg..ffrreeeeddeesskkttoopp..ssyysstteemmdd11(5).
+
+       ccaatt _P_A_T_T_E_R_N......
+           Show backing files of one or more units. Prints the "fragment" and "drop-ins" (source files) of units.
+           Each file is preceded by a comment which includes the file name. Note that this shows the contents of the
+           backing files on disk, which may not match the system manager's understanding of these units if any unit
+           files were updated on disk and the ddaaeemmoonn--rreellooaadd command wasn't issued since.
+
+       hheellpp _P_A_T_T_E_R_N......||_P_I_D......
+           Show manual pages for one or more units, if available. If a PID is given, the manual pages for the unit
+           the process belongs to are shown.
+
+       lliisstt--ddeeppeennddeenncciieess [_U_N_I_T...]
+           Shows units required and wanted by the specified units. This recursively lists units following the
+           _R_e_q_u_i_r_e_s_=, _R_e_q_u_i_s_i_t_e_=, _C_o_n_s_i_s_t_s_O_f_=, _W_a_n_t_s_=, _B_i_n_d_s_T_o_= dependencies. If no units are specified,
+           default.target is implied.
+
+           By default, only target units are recursively expanded. When ----aallll is passed, all other units are
+           recursively expanded as well.
+
+           Options ----rreevveerrssee, ----aafftteerr, ----bbeeffoorree may be used to change what types of dependencies are shown.
+
+           Note that this command only lists units currently loaded into memory by the service manager. In
+           particular, this command is not suitable to get a comprehensive list at all reverse dependencies on a
+           specific unit, as it won't list the dependencies declared by units currently not loaded.
+
+       ssttaarrtt _P_A_T_T_E_R_N......
+           Start (activate) one or more units specified on the command line.
+
+           Note that unit glob patterns expand to names of units currently in memory. Units which are not active and
+           are not in a failed state usually are not in memory, and will not be matched by any pattern. In addition,
+           in case of instantiated units, systemd is often unaware of the instance name until the instance has been
+           started. Therefore, using glob patterns with ssttaarrtt has limited usefulness. Also, secondary alias names of
+           units are not considered.
+
+           Option ----aallll may be used to also operate on inactive units which are referenced by other loaded units.
+           Note that this is not the same as operating on "all" possible units, because as the previous paragraph
+           describes, such a list is ill-defined. Nevertheless, ssyysstteemmccttll ssttaarrtt ----aallll _G_L_O_B may be useful if all the
+           units that should match the pattern are pulled in by some target which is known to be loaded.
+
+       ssttoopp _P_A_T_T_E_R_N......
+           Stop (deactivate) one or more units specified on the command line.
+
+           This command will fail if the unit does not exist or if stopping of the unit is prohibited (see
+           _R_e_f_u_s_e_M_a_n_u_a_l_S_t_o_p_= in ssyysstteemmdd..uunniitt(5)). It will _n_o_t fail if any of the commands configured to stop the unit
+           (_E_x_e_c_S_t_o_p_=, etc.) fail, because the manager will still forcibly terminate the unit.
+
+       rreellooaadd _P_A_T_T_E_R_N......
+           Asks all units listed on the command line to reload their configuration. Note that this will reload the
+           service-specific configuration, not the unit configuration file of systemd. If you want systemd to reload
+           the configuration file of a unit, use the ddaaeemmoonn--rreellooaadd command. In other words: for the example case of
+           Apache, this will reload Apache's httpd.conf in the web server, not the apache.service systemd unit file.
+
+           This command should not be confused with the ddaaeemmoonn--rreellooaadd command.
+
+       rreessttaarrtt _P_A_T_T_E_R_N......
+           Stop and then start one or more units specified on the command line. If the units are not running yet,
+           they will be started.
+
+           Note that restarting a unit with this command does not necessarily flush out all of the unit's resources
+           before it is started again. For example, the per-service file descriptor storage facility (see
+           _F_i_l_e_D_e_s_c_r_i_p_t_o_r_S_t_o_r_e_M_a_x_= in ssyysstteemmdd..sseerrvviiccee(5)) will remain intact as long as the unit has a job pending,
+           and is only cleared when the unit is fully stopped and no jobs are pending anymore. If it is intended that
+           the file descriptor store is flushed out, too, during a restart operation an explicit ssyysstteemmccttll ssttoopp
+           command followed by ssyysstteemmccttll ssttaarrtt should be issued.
+
+       ttrryy--rreessttaarrtt _P_A_T_T_E_R_N......
+           Stop and then start one or more units specified on the command line if the units are running. This does
+           nothing if units are not running.
+
+       rreellooaadd--oorr--rreessttaarrtt _P_A_T_T_E_R_N......
+           Reload one or more units if they support it. If not, stop and then start them instead. If the units are
+           not running yet, they will be started.
+
+       ttrryy--rreellooaadd--oorr--rreessttaarrtt _P_A_T_T_E_R_N......
+           Reload one or more units if they support it. If not, stop and then start them instead. This does nothing
+           if the units are not running.
+
+       iissoollaattee _U_N_I_T
+           Start the unit specified on the command line and its dependencies and stop all others, unless they have
+           IIggnnoorreeOOnnIIssoollaattee==yyeess (see ssyysstteemmdd..uunniitt(5)). If a unit name with no extension is given, an extension of
+           ".target" will be assumed.
+
+           This command is dangerous, since it will immediately stop processes that are not enabled in the new
+           target, possibly including the graphical environment or terminal you are currently using.
+
+           Note that this operation is allowed only on units where AAlllloowwIIssoollaattee== is enabled. See ssyysstteemmdd..uunniitt(5) for
+           details.
+
+       kkiillll _P_A_T_T_E_R_N......
+           Send a signal to one or more processes of the unit. Use ----kkiillll--wwhhoomm== to select which process to kill. Use
+           ----ssiiggnnaall== to select the signal to send.
+
+       cclleeaann _P_A_T_T_E_R_N......
+           Remove the configuration, state, cache, logs or runtime data of the specified units. Use ----wwhhaatt== to select
+           which kind of resource to remove. For service units this may be used to remove the directories configured
+           with _C_o_n_f_i_g_u_r_a_t_i_o_n_D_i_r_e_c_t_o_r_y_=, _S_t_a_t_e_D_i_r_e_c_t_o_r_y_=, _C_a_c_h_e_D_i_r_e_c_t_o_r_y_=, _L_o_g_s_D_i_r_e_c_t_o_r_y_= and _R_u_n_t_i_m_e_D_i_r_e_c_t_o_r_y_=, see
+           ssyysstteemmdd..eexxeecc(5) for details. For timer units this may be used to clear out the persistent timestamp data
+           if _P_e_r_s_i_s_t_e_n_t_= is used and ----wwhhaatt==ssttaattee is selected, see ssyysstteemmdd..ttiimmeerr(5). This command only applies to
+           units that use either of these settings. If ----wwhhaatt== is not specified, both the cache and runtime data are
+           removed (as these two types of data are generally redundant and reproducible on the next invocation of the
+           unit).
+
+       ffrreeeezzee _P_A_T_T_E_R_N......
+           Freeze one or more units specified on the command line using cgroup freezer
+
+           Freezing the unit will cause all processes contained within the cgroup corresponding to the unit to be
+           suspended. Being suspended means that unit's processes won't be scheduled to run on CPU until thawed. Note
+           that this command is supported only on systems that use unified cgroup hierarchy. Unit is automatically
+           thawed just before we execute a job against the unit, e.g. before the unit is stopped.
+
+       tthhaaww _P_A_T_T_E_R_N......
+           Thaw (unfreeze) one or more units specified on the command line.
+
+           This is the inverse operation to the ffrreeeezzee command and resumes the execution of processes in the unit's
+           cgroup.
+
+       sseett--pprrooppeerrttyy _U_N_I_T _P_R_O_P_E_R_T_Y==_V_A_L_U_E......
+           Set the specified unit properties at runtime where this is supported. This allows changing configuration
+           parameter properties such as resource control settings at runtime. Not all properties may be changed at
+           runtime, but many resource control settings (primarily those in ssyysstteemmdd..rreessoouurrccee--ccoonnttrrooll(5)) may. The
+           changes are applied immediately, and stored on disk for future boots, unless ----rruunnttiimmee is passed, in which
+           case the settings only apply until the next reboot. The syntax of the property assignment follows closely
+           the syntax of assignments in unit files.
+
+           Example: ssyysstteemmccttll sseett--pprrooppeerrttyy ffoooobbaarr..sseerrvviiccee CCPPUUWWeeiigghhtt==220000
+
+           If the specified unit appears to be inactive, the changes will be only stored on disk as described
+           previously hence they will be effective when the unit will be started.
+
+           Note that this command allows changing multiple properties at the same time, which is preferable over
+           setting them individually.
+
+           Example: ssyysstteemmccttll sseett--pprrooppeerrttyy ffoooobbaarr..sseerrvviiccee CCPPUUWWeeiigghhtt==220000 MMeemmoorryyMMaaxx==22GG IIPPAAccccoouunnttiinngg==yyeess
+
+           Like with unit file configuration settings, assigning an empty setting usually resets a property to its
+           defaults.
+
+           Example: ssyysstteemmccttll sseett--pprrooppeerrttyy aavvaahhii--ddaaeemmoonn..sseerrvviiccee IIPPAAddddrreessssDDeennyy==
+
+       bbiinndd _U_N_I_T _P_A_T_H [_P_A_T_H]
+           Bind-mounts a file or directory from the host into the specified unit's mount namespace. The first path
+           argument is the source file or directory on the host, the second path argument is the destination file or
+           directory in the unit's mount namespace. When the latter is omitted, the destination path in the unit's
+           mount namespace is the same as the source path on the host. When combined with the ----rreeaadd--oonnllyy switch, a
+           ready-only bind mount is created. When combined with the ----mmkkddiirr switch, the destination path is first
+           created before the mount is applied.
+
+           Note that this option is currently only supported for units that run within a mount namespace (e.g.: with
+           RRoooottIImmaaggee==, PPrriivvaatteeMMoouunnttss==, etc.). This command supports bind-mounting directories, regular files, device
+           nodes, AAFF__UUNNIIXX socket nodes, as well as FIFOs. The bind mount is ephemeral, and it is undone as soon as
+           the current unit process exists. Note that the namespace mentioned here, where the bind mount will be
+           added to, is the one where the main service process runs. Other processes (those exececuted by
+           EExxeeccRReellooaadd==, EExxeeccSSttaarrttPPrree==, etc.) run in distinct namespaces.
+
+       mmoouunntt--iimmaaggee _U_N_I_T _I_M_A_G_E [_P_A_T_H [_P_A_R_T_I_T_I_O_N___N_A_M_E:_M_O_U_N_T___O_P_T_I_O_N_S]]
+           Mounts an image from the host into the specified unit's mount namespace. The first path argument is the
+           source image on the host, the second path argument is the destination directory in the unit's mount
+           namespace (i.e. inside RRoooottIImmaaggee==/RRoooottDDiirreeccttoorryy==). The following argument, if any, is interpreted as a
+           colon-separated tuple of partition name and comma-separated list of mount options for that partition. The
+           format is the same as the service MMoouunnttIImmaaggeess== setting. When combined with the ----rreeaadd--oonnllyy switch, a
+           ready-only mount is created. When combined with the ----mmkkddiirr switch, the destination path is first created
+           before the mount is applied.
+
+           Note that this option is currently only supported for units that run within a mount namespace (i.e. with
+           RRoooottIImmaaggee==, PPrriivvaatteeMMoouunnttss==, etc.). Note that the namespace mentioned here where the image mount will be
+           added to, is the one where the main service process runs. Note that the namespace mentioned here, where
+           the bind mount will be added to, is the one where the main service process runs. Other processes (those
+           exececuted by EExxeeccRReellooaadd==, EExxeeccSSttaarrttPPrree==, etc.) run in distinct namespaces.
+
+           Example:
+
+               systemctl mount-image foo.service /tmp/img.raw /var/lib/image root:ro,nosuid
+
+               systemctl mount-image --mkdir bar.service /tmp/img.raw /var/lib/baz/img
+
+       sseerrvviiccee--lloogg--lleevveell _S_E_R_V_I_C_E [_L_E_V_E_L]
+           If the _L_E_V_E_L argument is not given, print the current log level as reported by service _S_E_R_V_I_C_E.
+
+           If the optional argument _L_E_V_E_L is provided, then change the current log level of the service to _L_E_V_E_L. The
+           log level should be a typical syslog log level, i.e. a value in the range 0...7 or one of the strings
+           eemmeerrgg, aalleerrtt, ccrriitt, eerrrr, wwaarrnniinngg, nnoottiiccee, iinnffoo, ddeebbuugg; see ssyysslloogg(3) for details.
+
+           The service must have the appropriate _B_u_s_N_a_m_e_=_d_e_s_t_i_n_a_t_i_o_n property and also implement the generic
+           oorrgg..ffrreeeeddeesskkttoopp..LLooggCCoonnttrrooll11(5) interface. (systemctl will use the generic D-Bus protocol to access the
+           org.freedesktop.LogControl1.LogLevel interface for the D-Bus name _d_e_s_t_i_n_a_t_i_o_n.)
+
+       sseerrvviiccee--lloogg--ttaarrggeett _S_E_R_V_I_C_E [_T_A_R_G_E_T]
+           If the _T_A_R_G_E_T argument is not given, print the current log target as reported by service _S_E_R_V_I_C_E.
+
+           If the optional argument _T_A_R_G_E_T is provided, then change the current log target of the service to _T_A_R_G_E_T.
+           The log target should be one of the strings ccoonnssoollee (for log output to the service's standard error
+           stream), kkmmssgg (for log output to the kernel log buffer), jjoouurrnnaall (for log output to ssyysstteemmdd--
+           jjoouurrnnaalldd..sseerrvviiccee(8) using the native journal protocol), ssyysslloogg (for log output to the classic syslog
+           socket /dev/log), nnuullll (for no log output whatsoever) or aauuttoo (for an automatically determined choice,
+           typically equivalent to ccoonnssoollee if the service is invoked interactively, and jjoouurrnnaall or ssyysslloogg otherwise).
+
+           For most services, only a small subset of log targets make sense. In particular, most "normal" services
+           should only implement ccoonnssoollee, jjoouurrnnaall, and nnuullll. Anything else is only appropriate for low-level services
+           that are active in very early boot before proper logging is established.
+
+           The service must have the appropriate _B_u_s_N_a_m_e_=_d_e_s_t_i_n_a_t_i_o_n property and also implement the generic
+           oorrgg..ffrreeeeddeesskkttoopp..LLooggCCoonnttrrooll11(5) interface. (systemctl will use the generic D-Bus protocol to access the
+           org.freedesktop.LogControl1.LogLevel interface for the D-Bus name _d_e_s_t_i_n_a_t_i_o_n.)
+
+       rreesseett--ffaaiilleedd [[_P_A_T_T_E_R_N......]]
+           Reset the "failed" state of the specified units, or if no unit name is passed, reset the state of all
+           units. When a unit fails in some way (i.e. process exiting with non-zero error code, terminating
+           abnormally or timing out), it will automatically enter the "failed" state and its exit code and status is
+           recorded for introspection by the administrator until the service is stopped/re-started or reset with this
+           command.
+
+           In addition to resetting the "failed" state of a unit it also resets various other per-unit properties:
+           the start rate limit counter of all unit types is reset to zero, as is the restart counter of service
+           units. Thus, if a unit's start limit (as configured with _S_t_a_r_t_L_i_m_i_t_I_n_t_e_r_v_a_l_S_e_c_=/_S_t_a_r_t_L_i_m_i_t_B_u_r_s_t_=) is hit
+           and the unit refuses to be started again, use this command to make it startable again.
+
+   UUnniitt FFiillee CCoommmmaannddss
+       lliisstt--uunniitt--ffiilleess [_P_A_T_T_E_R_N_._._.]
+           List unit files installed on the system, in combination with their enablement state (as reported by
+           iiss--eennaabblleedd). If one or more _P_A_T_T_E_R_Ns are specified, only unit files whose name matches one of them are
+           shown (patterns matching unit file system paths are not supported).
+
+           Unlike lliisstt--uunniittss this command will list template units in addition to explicitly instantiated units.
+
+       eennaabbllee _U_N_I_T......, eennaabbllee _P_A_T_H......
+           Enable one or more units or unit instances. This will create a set of symlinks, as encoded in the
+           [Install] sections of the indicated unit files. After the symlinks have been created, the system manager
+           configuration is reloaded (in a way equivalent to ddaaeemmoonn--rreellooaadd), in order to ensure the changes are taken
+           into account immediately. Note that this does _n_o_t have the effect of also starting any of the units being
+           enabled. If this is desired, combine this command with the ----nnooww switch, or invoke ssttaarrtt with appropriate
+           arguments later. Note that in case of unit instance enablement (i.e. enablement of units of the form
+           foo@bar.service), symlinks named the same as instances are created in the unit configuration directory,
+           however they point to the single template unit file they are instantiated from.
+
+           This command expects either valid unit names (in which case various unit file directories are
+           automatically searched for unit files with appropriate names), or absolute paths to unit files (in which
+           case these files are read directly). If a specified unit file is located outside of the usual unit file
+           directories, an additional symlink is created, linking it into the unit configuration path, thus ensuring
+           it is found when requested by commands such as ssttaarrtt. The file system where the linked unit files are
+           located must be accessible when systemd is started (e.g. anything underneath /home/ or /var/ is not
+           allowed, unless those directories are located on the root file system).
+
+           This command will print the file system operations executed. This output may be suppressed by passing
+           ----qquuiieett.
+
+           Note that this operation creates only the symlinks suggested in the [Install] section of the unit files.
+           While this command is the recommended way to manipulate the unit configuration directory, the
+           administrator is free to make additional changes manually by placing or removing symlinks below this
+           directory. This is particularly useful to create configurations that deviate from the suggested default
+           installation. In this case, the administrator must make sure to invoke ddaaeemmoonn--rreellooaadd manually as
+           necessary, in order to ensure the changes are taken into account.
+
+           Enabling units should not be confused with starting (activating) units, as done by the ssttaarrtt command.
+           Enabling and starting units is orthogonal: units may be enabled without being started and started without
+           being enabled. Enabling simply hooks the unit into various suggested places (for example, so that the unit
+           is automatically started on boot or when a particular kind of hardware is plugged in). Starting actually
+           spawns the daemon process (in case of service units), or binds the socket (in case of socket units), and
+           so on.
+
+           Depending on whether ----ssyysstteemm, ----uusseerr, ----rruunnttiimmee, or ----gglloobbaall is specified, this enables the unit for the
+           system, for the calling user only, for only this boot of the system, or for all future logins of all
+           users. Note that in the last case, no systemd daemon configuration is reloaded.
+
+           Using eennaabbllee on masked units is not supported and results in an error.
+
+       ddiissaabbllee _U_N_I_T......
+           Disables one or more units. This removes all symlinks to the unit files backing the specified units from
+           the unit configuration directory, and hence undoes any changes made by eennaabbllee or lliinnkk. Note that this
+           removes _a_l_l symlinks to matching unit files, including manually created symlinks, and not just those
+           actually created by eennaabbllee or lliinnkk. Note that while ddiissaabbllee undoes the effect of eennaabbllee, the two commands
+           are otherwise not symmetric, as ddiissaabbllee may remove more symlinks than a prior eennaabbllee invocation of the
+           same unit created.
+
+           This command expects valid unit names only, it does not accept paths to unit files.
+
+           In addition to the units specified as arguments, all units are disabled that are listed in the _A_l_s_o_=
+           setting contained in the [Install] section of any of the unit files being operated on.
+
+           This command implicitly reloads the system manager configuration after completing the operation. Note that
+           this command does not implicitly stop the units that are being disabled. If this is desired, either
+           combine this command with the ----nnooww switch, or invoke the ssttoopp command with appropriate arguments later.
+
+           This command will print information about the file system operations (symlink removals) executed. This
+           output may be suppressed by passing ----qquuiieett.
+
+           This command honors ----ssyysstteemm, ----uusseerr, ----rruunnttiimmee and ----gglloobbaall in a similar way as eennaabbllee.
+
+       rreeeennaabbllee _U_N_I_T......
+           Reenable one or more units, as specified on the command line. This is a combination of ddiissaabbllee and eennaabbllee
+           and is useful to reset the symlinks a unit file is enabled with to the defaults configured in its
+           [Install] section. This command expects a unit name only, it does not accept paths to unit files.
+
+       pprreesseett _U_N_I_T......
+           Reset the enable/disable status one or more unit files, as specified on the command line, to the defaults
+           configured in the preset policy files. This has the same effect as ddiissaabbllee or eennaabbllee, depending how the
+           unit is listed in the preset files.
+
+           Use ----pprreesseett--mmooddee== to control whether units shall be enabled and disabled, or only enabled, or only
+           disabled.
+
+           If the unit carries no install information, it will be silently ignored by this command.  _U_N_I_T must be the
+           real unit name, any alias names are ignored silently.
+
+           For more information on the preset policy format, see ssyysstteemmdd..pprreesseett(5).
+
+       pprreesseett--aallll
+           Resets all installed unit files to the defaults configured in the preset policy file (see above).
+
+           Use ----pprreesseett--mmooddee== to control whether units shall be enabled and disabled, or only enabled, or only
+           disabled.
+
+       iiss--eennaabblleedd _U_N_I_T......
+           Checks whether any of the specified unit files are enabled (as with eennaabbllee). Returns an exit code of 0 if
+           at least one is enabled, non-zero otherwise. Prints the current enable status (see table). To suppress
+           this output, use ----qquuiieett. To show installation targets, use ----ffuullll.
+
+           TTaabbllee 11..  iiss--eennaabblleedd oouuttppuutt
+           ┌──────────────────┬───────────────────────────────┬───────────┐
+           │NNaammee              │ DDeessccrriippttiioonn                   │ EExxiitt CCooddee │
+           ├──────────────────┼───────────────────────────────┼───────────┤
+           │"enabled"         │ Enabled via .wants/,          │           │
+           ├──────────────────┤ .requires/ or _A_l_i_a_s_= symlinks │           │
+           │"enabled-runtime" │ (permanently in               │ 0         │
+           │                  │ /etc/systemd/system/, or      │           │
+           │                  │ transiently in                │           │
+           │                  │ /run/systemd/system/).        │           │
+           ├──────────────────┼───────────────────────────────┼───────────┤
+           │"linked"          │ Made available through one or │           │
+           ├──────────────────┤ more symlinks to the unit     │           │
+           │"linked-runtime"  │ file (permanently in          │           │
+           │                  │ /etc/systemd/system/ or       │           │
+           │                  │ transiently in                │ > 0       │
+           │                  │ /run/systemd/system/), even   │           │
+           │                  │ though the unit file might    │           │
+           │                  │ reside outside of the unit    │           │
+           │                  │ file search path.             │           │
+           ├──────────────────┼───────────────────────────────┼───────────┤
+           │"alias"           │ The name is an alias (symlink │ 0         │
+           │                  │ to another unit file).        │           │
+           ├──────────────────┼───────────────────────────────┼───────────┤
+           │"masked"          │ Completely disabled, so that  │           │
+           ├──────────────────┤ any start operation on it     │           │
+           │"masked-runtime"  │ fails (permanently in         │ > 0       │
+           │                  │ /etc/systemd/system/ or       │           │
+           │                  │ transiently in                │           │
+           │                  │ /run/systemd/systemd/).       │           │
+           ├──────────────────┼───────────────────────────────┼───────────┤
+           │"static"          │ The unit file is not enabled, │ 0         │
+           │                  │ and has no provisions for     │           │
+           │                  │ enabling in the [Install]     │           │
+           │                  │ unit file section.            │           │
+           ├──────────────────┼───────────────────────────────┼───────────┤
+           │"indirect"        │ The unit file itself is not   │ 0         │
+           │                  │ enabled, but it has a         │           │
+           │                  │ non-empty _A_l_s_o_= setting in    │           │
+           │                  │ the [Install] unit file       │           │
+           │                  │ section, listing other unit   │           │
+           │                  │ files that might be enabled,  │           │
+           │                  │ or it has an alias under a    │           │
+           │                  │ different name through a      │           │
+           │                  │ symlink that is not specified │           │
+           │                  │ in _A_l_s_o_=. For template unit   │           │
+           │                  │ files, an instance different  │           │
+           │                  │ than the one specified in     │           │
+           │                  │ _D_e_f_a_u_l_t_I_n_s_t_a_n_c_e_= is enabled.  │           │
+           ├──────────────────┼───────────────────────────────┼───────────┤
+           │"disabled"        │ The unit file is not enabled, │ > 0       │
+           │                  │ but contains an [Install]     │           │
+           │                  │ section with installation     │           │
+           │                  │ instructions.                 │           │
+           ├──────────────────┼───────────────────────────────┼───────────┤
+           │"generated"       │ The unit file was generated   │ 0         │
+           │                  │ dynamically via a generator   │           │
+           │                  │ tool. See                     │           │
+           │                  │ ssyysstteemmdd..ggeenneerraattoorr(7).         │           │
+           │                  │ Generated unit files may not  │           │
+           │                  │ be enabled, they are enabled  │           │
+           │                  │ implicitly by their           │           │
+           │                  │ generator.                    │           │
+           ├──────────────────┼───────────────────────────────┼───────────┤
+           │"transient"       │ The unit file has been        │ 0         │
+           │                  │ created dynamically with the  │           │
+           │                  │ runtime API. Transient units  │           │
+           │                  │ may not be enabled.           │           │
+           ├──────────────────┼───────────────────────────────┼───────────┤
+           │"bad"             │ The unit file is invalid or   │ > 0       │
+           │                  │ another error occurred. Note  │           │
+           │                  │ that iiss--eennaabblleedd will not      │           │
+           │                  │ actually return this state,   │           │
+           │                  │ but print an error message    │           │
+           │                  │ instead. However the unit     │           │
+           │                  │ file listing printed by       │           │
+           │                  │ lliisstt--uunniitt--ffiilleess might show    │           │
+           │                  │ it.                           │           │
+           └──────────────────┴───────────────────────────────┴───────────┘
+
+       mmaasskk _U_N_I_T......
+           Mask one or more units, as specified on the command line. This will link these unit files to /dev/null,
+           making it impossible to start them. This is a stronger version of ddiissaabbllee, since it prohibits all kinds of
+           activation of the unit, including enablement and manual activation. Use this option with care. This honors
+           the ----rruunnttiimmee option to only mask temporarily until the next reboot of the system. The ----nnooww option may be
+           used to ensure that the units are also stopped. This command expects valid unit names only, it does not
+           accept unit file paths.
+
+           Note that this will create a symlink under the unit's name in /etc/systemd/system/ (in case ----rruunnttiimmee is
+           not specified) or /run/systemd/system/ (in case ----rruunnttiimmee is specified). If a matching unit file already
+           exists under these directories this operation will hence fail. This means that the operation is primarily
+           useful to mask units shipped by the vendor (as those are shipped in /lib/systemd/system/ and not the
+           aforementioned two directories), but typically doesn't work for units created locally (as those are
+           typically placed precisely in the two aforementioned directories). Similar restrictions apply for ----uusseerr
+           mode, in which case the directories are below the user's home directory however.
+
+       uunnmmaasskk _U_N_I_T......
+           Unmask one or more unit files, as specified on the command line. This will undo the effect of mmaasskk. This
+           command expects valid unit names only, it does not accept unit file paths.
+
+       lliinnkk _P_A_T_H......
+           Link a unit file that is not in the unit file search path into the unit file search path. This command
+           expects an absolute path to a unit file. The effect of this may be undone with ddiissaabbllee. The effect of this
+           command is that a unit file is made available for commands such as ssttaarrtt, even though it is not installed
+           directly in the unit search path. The file system where the linked unit files are located must be
+           accessible when systemd is started (e.g. anything underneath /home/ or /var/ is not allowed, unless those
+           directories are located on the root file system).
+
+       rreevveerrtt _U_N_I_T......
+           Revert one or more unit files to their vendor versions. This command removes drop-in configuration files
+           that modify the specified units, as well as any user-configured unit file that overrides a matching vendor
+           supplied unit file. Specifically, for a unit "foo.service" the matching directories "foo.service.d/" with
+           all their contained files are removed, both below the persistent and runtime configuration directories
+           (i.e. below /etc/systemd/system and /run/systemd/system); if the unit file has a vendor-supplied version
+           (i.e. a unit file located below /usr/) any matching persistent or runtime unit file that overrides it is
+           removed, too. Note that if a unit file has no vendor-supplied version (i.e. is only defined below
+           /etc/systemd/system or /run/systemd/system, but not in a unit file stored below /usr/), then it is not
+           removed. Also, if a unit is masked, it is unmasked.
+
+           Effectively, this command may be used to undo all changes made with ssyysstteemmccttll eeddiitt, ssyysstteemmccttll sseett--pprrooppeerrttyy
+           and ssyysstteemmccttll mmaasskk and puts the original unit file with its settings back in effect.
+
+       aadddd--wwaannttss _T_A_R_G_E_T _U_N_I_T......, aadddd--rreeqquuiirreess _T_A_R_G_E_T _U_N_I_T......
+           Adds "Wants=" or "Requires=" dependencies, respectively, to the specified _T_A_R_G_E_T for one or more units.
+
+           This command honors ----ssyysstteemm, ----uusseerr, ----rruunnttiimmee and ----gglloobbaall in a way similar to eennaabbllee.
+
+       eeddiitt _U_N_I_T......
+           Edit a drop-in snippet or a whole replacement file if ----ffuullll is specified, to extend or override the
+           specified unit.
+
+           Depending on whether ----ssyysstteemm (the default), ----uusseerr, or ----gglloobbaall is specified, this command creates a
+           drop-in file for each unit either for the system, for the calling user, or for all futures logins of all
+           users. Then, the editor (see the "Environment" section below) is invoked on temporary files which will be
+           written to the real location if the editor exits successfully.
+
+           If ----ffuullll is specified, this will copy the original units instead of creating drop-in files.
+
+           If ----ffoorrccee is specified and any units do not already exist, new unit files will be opened for editing.
+
+           If ----rruunnttiimmee is specified, the changes will be made temporarily in /run/ and they will be lost on the next
+           reboot.
+
+           If the temporary file is empty upon exit, the modification of the related unit is canceled.
+
+           After the units have been edited, systemd configuration is reloaded (in a way that is equivalent to
+           ddaaeemmoonn--rreellooaadd).
+
+           Note that this command cannot be used to remotely edit units and that you cannot temporarily edit units
+           which are in /etc/, since they take precedence over /run/.
+
+       ggeett--ddeeffaauulltt
+           Return the default target to boot into. This returns the target unit name default.target is aliased
+           (symlinked) to.
+
+       sseett--ddeeffaauulltt _T_A_R_G_E_T
+           Set the default target to boot into. This sets (symlinks) the default.target alias to the given target
+           unit.
+
+   MMaacchhiinnee CCoommmmaannddss
+       lliisstt--mmaacchhiinneess [_P_A_T_T_E_R_N...]
+           List the host and all running local containers with their state. If one or more _P_A_T_T_E_R_Ns are specified,
+           only containers matching one of them are shown.
+
+   JJoobb CCoommmmaannddss
+       lliisstt--jjoobbss [[_P_A_T_T_E_R_N_._._.]
+           List jobs that are in progress. If one or more _P_A_T_T_E_R_Ns are specified, only jobs for units matching one of
+           them are shown.
+
+           When combined with ----aafftteerr or ----bbeeffoorree the list is augmented with information on which other job each job
+           is waiting for, and which other jobs are waiting for it, see above.
+
+       ccaanncceell [[_J_O_B...]
+           Cancel one or more jobs specified on the command line by their numeric job IDs. If no job ID is specified,
+           cancel all pending jobs.
+
+   EEnnvviirroonnmmeenntt CCoommmmaannddss
+       ssyysstteemmdd supports an environment block that is passed to processes the manager spawns. The names of the
+       variables can contain ASCII letters, digits, and the underscore character. Variable names cannot be empty or
+       start with a digit. In variable values, most characters are allowed, but the whole sequence must be valid
+       UTF-8. (Note that control characters like newline (NNLL), tab (TTAABB), or the escape character (EESSCC), _a_r_e valid
+       ASCII and thus valid UTF-8). The total length of the environment block is limited to __SSCC__AARRGG__MMAAXX value defined
+       by ssyyssccoonnff(3).
+
+       sshhooww--eennvviirroonnmmeenntt
+           Dump the systemd manager environment block. This is the environment block that is passed to all processes
+           the manager spawns. The environment block will be dumped in straightforward form suitable for sourcing
+           into most shells. If no special characters or whitespace is present in the variable values, no escaping is
+           performed, and the assignments have the form "VARIABLE=value". If whitespace or characters which have
+           special meaning to the shell are present, dollar-single-quote escaping is used, and assignments have the
+           form "VARIABLE=$'value'". This syntax is known to be supported by bbaasshh(1), zzsshh(1), kksshh(1), and
+           bbuussyybbooxx(1)'s aasshh(1), but not ddaasshh(1) or ffiisshh(1).
+
+       sseett--eennvviirroonnmmeenntt _V_A_R_I_A_B_L_E_=_V_A_L_U_E......
+           Set one or more systemd manager environment variables, as specified on the command line. This command will
+           fail if variable names and values do not conform to the rules listed above.
+
+       uunnsseett--eennvviirroonnmmeenntt _V_A_R_I_A_B_L_E......
+           Unset one or more systemd manager environment variables. If only a variable name is specified, it will be
+           removed regardless of its value. If a variable and a value are specified, the variable is only removed if
+           it has the specified value.
+
+       iimmppoorrtt--eennvviirroonnmmeenntt _V_A_R_I_A_B_L_E_._._.
+           Import all, one or more environment variables set on the client into the systemd manager environment
+           block. If a list of environment variable names is passed, client-side values are then imported into the
+           manager's environment block. If any names are not valid environment variable names or have invalid values
+           according to the rules described above, an error is raised. If no arguments are passed, the entire
+           environment block inherited by the ssyysstteemmccttll process is imported. In this mode, any inherited invalid
+           environment variables are quietly ignored.
+
+           Importing of the full inherited environment block (calling this command without any arguments) is
+           deprecated. A shell will set dozens of variables which only make sense locally and are only meant for
+           processes which are descendants of the shell. Such variables in the global environment block are confusing
+           to other processes.
+
+   MMaannaaggeerr SSttaattee CCoommmmaannddss
+       ddaaeemmoonn--rreellooaadd
+           Reload the systemd manager configuration. This will rerun all generators (see ssyysstteemmdd..ggeenneerraattoorr(7)),
+           reload all unit files, and recreate the entire dependency tree. While the daemon is being reloaded, all
+           sockets systemd listens on behalf of user configuration will stay accessible.
+
+           This command should not be confused with the rreellooaadd command.
+
+       ddaaeemmoonn--rreeeexxeecc
+           Reexecute the systemd manager. This will serialize the manager state, reexecute the process and
+           deserialize the state again. This command is of little use except for debugging and package upgrades.
+           Sometimes, it might be helpful as a heavy-weight ddaaeemmoonn--rreellooaadd. While the daemon is being reexecuted, all
+           sockets systemd listening on behalf of user configuration will stay accessible.
+
+       lloogg--lleevveell [_L_E_V_E_L]
+           If no argument is given, print the current log level of the manager. If an optional argument _L_E_V_E_L is
+           provided, then the command changes the current log level of the manager to _L_E_V_E_L (accepts the same values
+           as ----lloogg--lleevveell== described in ssyysstteemmdd(1)).
+
+       lloogg--ttaarrggeett [_T_A_R_G_E_T]
+           If no argument is given, print the current log target of the manager. If an optional argument _T_A_R_G_E_T is
+           provided, then the command changes the current log target of the manager to _T_A_R_G_E_T (accepts the same
+           values as ----lloogg--ttaarrggeett==, described in ssyysstteemmdd(1)).
+
+       sseerrvviiccee--wwaattcchhddooggss [yes|no]
+           If no argument is given, print the current state of service runtime watchdogs of the manager. If an
+           optional boolean argument is provided, then globally enables or disables the service runtime watchdogs
+           (WWaattcchhddooggSSeecc==) and emergency actions (e.g.  OOnnFFaaiilluurree== or SSttaarrttLLiimmiittAAccttiioonn==); see ssyysstteemmdd..sseerrvviiccee(5). The
+           hardware watchdog is not affected by this setting.
+
+   SSyysstteemm CCoommmmaannddss
+       iiss--ssyysstteemm--rruunnnniinngg
+           Checks whether the system is operational. This returns success (exit code 0) when the system is fully up
+           and running, specifically not in startup, shutdown or maintenance mode, and with no failed services.
+           Failure is returned otherwise (exit code non-zero). In addition, the current state is printed in a short
+           string to standard output, see the table below. Use ----qquuiieett to suppress this output.
+
+           Use ----wwaaiitt to wait until the boot process is completed before printing the current state and returning the
+           appropriate error status. If ----wwaaiitt is in use, states _i_n_i_t_i_a_l_i_z_i_n_g or _s_t_a_r_t_i_n_g will not be reported,
+           instead the command will block until a later state (such as _r_u_n_n_i_n_g or _d_e_g_r_a_d_e_d) is reached.
+
+           TTaabbllee 22.. iiss--ssyysstteemm--rruunnnniinngg oouuttppuutt
+           ┌─────────────┬───────────────────────────────┬───────────┐
+           │NNaammee         │ DDeessccrriippttiioonn                   │ EExxiitt CCooddee │
+           ├─────────────┼───────────────────────────────┼───────────┤
+           │_i_n_i_t_i_a_l_i_z_i_n_g │ Early bootup, before          │ > 0       │
+           │             │ basic.target is reached or    │           │
+           │             │ the _m_a_i_n_t_e_n_a_n_c_e state         │           │
+           │             │ entered.                      │           │
+           ├─────────────┼───────────────────────────────┼───────────┤
+           │_s_t_a_r_t_i_n_g     │ Late bootup, before the job   │ > 0       │
+           │             │ queue becomes idle for the    │           │
+           │             │ first time, or one of the     │           │
+           │             │ rescue targets are reached.   │           │
+           ├─────────────┼───────────────────────────────┼───────────┤
+           │_r_u_n_n_i_n_g      │ The system is fully           │ 0         │
+           │             │ operational.                  │           │
+           ├─────────────┼───────────────────────────────┼───────────┤
+           │_d_e_g_r_a_d_e_d     │ The system is operational but │ > 0       │
+           │             │ one or more units failed.     │           │
+           ├─────────────┼───────────────────────────────┼───────────┤
+           │_m_a_i_n_t_e_n_a_n_c_e  │ The rescue or emergency       │ > 0       │
+           │             │ target is active.             │           │
+           ├─────────────┼───────────────────────────────┼───────────┤
+           │_s_t_o_p_p_i_n_g     │ The manager is shutting down. │ > 0       │
+           ├─────────────┼───────────────────────────────┼───────────┤
+           │_o_f_f_l_i_n_e      │ The manager is not running.   │ > 0       │
+           │             │ Specifically, this is the     │           │
+           │             │ operational state if an       │           │
+           │             │ incompatible program is       │           │
+           │             │ running as system manager     │           │
+           │             │ (PID 1).                      │           │
+           ├─────────────┼───────────────────────────────┼───────────┤
+           │_u_n_k_n_o_w_n      │ The operational state could   │ > 0       │
+           │             │ not be determined, due to     │           │
+           │             │ lack of resources or another  │           │
+           │             │ error cause.                  │           │
+           └─────────────┴───────────────────────────────┴───────────┘
+
+       ddeeffaauulltt
+           Enter default mode. This is equivalent to ssyysstteemmccttll iissoollaattee ddeeffaauulltt..ttaarrggeett. This operation is blocking by
+           default, use ----nnoo--bblloocckk to request asynchronous behavior.
+
+       rreessccuuee
+           Enter rescue mode. This is equivalent to ssyysstteemmccttll iissoollaattee rreessccuuee..ttaarrggeett. This operation is blocking by
+           default, use ----nnoo--bblloocckk to request asynchronous behavior.
+
+       eemmeerrggeennccyy
+           Enter emergency mode. This is equivalent to ssyysstteemmccttll iissoollaattee eemmeerrggeennccyy..ttaarrggeett. This operation is blocking
+           by default, use ----nnoo--bblloocckk to request asynchronous behavior.
+
+       hhaalltt
+           Shut down and halt the system. This is mostly equivalent to ssyysstteemmccttll ssttaarrtt hhaalltt..ttaarrggeett
+           ----jjoobb--mmooddee==rreeppllaaccee--iirrrreevveerrssiibbllyy ----nnoo--bblloocckk, but also prints a wall message to all users. This command is
+           asynchronous; it will return after the halt operation is enqueued, without waiting for it to complete.
+           Note that this operation will simply halt the OS kernel after shutting down, leaving the hardware powered
+           on. Use ssyysstteemmccttll ppoowweerrooffff for powering off the system (see below).
+
+           If combined with ----ffoorrccee, shutdown of all running services is skipped, however all processes are killed
+           and all file systems are unmounted or mounted read-only, immediately followed by the system halt. If
+           ----ffoorrccee is specified twice, the operation is immediately executed without terminating any processes or
+           unmounting any file systems. This may result in data loss. Note that when ----ffoorrccee is specified twice the
+           halt operation is executed by ssyysstteemmccttll itself, and the system manager is not contacted. This means the
+           command should succeed even when the system manager has crashed.
+
+       ppoowweerrooffff
+           Shut down and power-off the system. This is mostly equivalent to ssyysstteemmccttll ssttaarrtt ppoowweerrooffff..ttaarrggeett
+           ----jjoobb--mmooddee==rreeppllaaccee--iirrrreevveerrssiibbllyy ----nnoo--bblloocckk, but also prints a wall message to all users. This command is
+           asynchronous; it will return after the power-off operation is enqueued, without waiting for it to
+           complete.
+
+           If combined with ----ffoorrccee, shutdown of all running services is skipped, however all processes are killed
+           and all file systems are unmounted or mounted read-only, immediately followed by the powering off. If
+           ----ffoorrccee is specified twice, the operation is immediately executed without terminating any processes or
+           unmounting any file systems. This may result in data loss. Note that when ----ffoorrccee is specified twice the
+           power-off operation is executed by ssyysstteemmccttll itself, and the system manager is not contacted. This means
+           the command should succeed even when the system manager has crashed.
+
+       rreebboooott
+           Shut down and reboot the system.
+
+           This command mostly equivalent to ssyysstteemmccttll ssttaarrtt rreebboooott..ttaarrggeett ----jjoobb--mmooddee==rreeppllaaccee--iirrrreevveerrssiibbllyy
+           ----nnoo--bblloocckk, but also prints a wall message to all users. This command is asynchronous; it will return
+           after the reboot operation is enqueued, without waiting for it to complete.
+
+           If combined with ----ffoorrccee, shutdown of all running services is skipped, however all processes are killed
+           and all file systems are unmounted or mounted read-only, immediately followed by the reboot. If ----ffoorrccee is
+           specified twice, the operation is immediately executed without terminating any processes or unmounting any
+           file systems. This may result in data loss. Note that when ----ffoorrccee is specified twice the reboot operation
+           is executed by ssyysstteemmccttll itself, and the system manager is not contacted. This means the command should
+           succeed even when the system manager has crashed.
+
+           If the switch ----rreebboooott--aarrgguummeenntt== is given, it will be passed as the optional argument to the rreebboooott(2)
+           system call.
+
+           Options ----bboooott--llooaaddeerr--eennttrryy==, ----bboooott--llooaaddeerr--mmeennuu==, and ----ffiirrmmwwaarree--sseettuupp can be used to select what to do
+           _a_f_t_e_r the reboot. See the descriptions of those options for details.
+
+       kkeexxeecc
+           Shut down and reboot the system via kkeexxeecc. This is equivalent to ssyysstteemmccttll ssttaarrtt kkeexxeecc..ttaarrggeett
+           ----jjoobb--mmooddee==rreeppllaaccee--iirrrreevveerrssiibbllyy ----nnoo--bblloocckk. This command is asynchronous; it will return after the reboot
+           operation is enqueued, without waiting for it to complete.
+
+           If combined with ----ffoorrccee, shutdown of all running services is skipped, however all processes are killed
+           and all file systems are unmounted or mounted read-only, immediately followed by the reboot.
+
+       eexxiitt [_E_X_I_T___C_O_D_E]
+           Ask the service manager to quit. This is only supported for user service managers (i.e. in conjunction
+           with the ----uusseerr option) or in containers and is equivalent to ppoowweerrooffff otherwise. This command is
+           asynchronous; it will return after the exit operation is enqueued, without waiting for it to complete.
+
+           The service manager will exit with the specified exit code, if _E_X_I_T___C_O_D_E is passed.
+
+       sswwiittcchh--rroooott _R_O_O_T [_I_N_I_T]
+           Switches to a different root directory and executes a new system manager process below it. This is
+           intended for use in the initrd, and will transition from the initrd's system manager process (a.k.a.
+           "init" process) to the main system manager process which is loaded from the actual host root files system.
+           This call takes two arguments: the directory that is to become the new root directory, and the path to the
+           new system manager binary below it to execute as PID 1. If the latter is omitted or the empty string, a
+           systemd binary will automatically be searched for and used as init. If the system manager path is omitted,
+           equal to the empty string or identical to the path to the systemd binary, the state of the initrd's system
+           manager process is passed to the main system manager, which allows later introspection of the state of the
+           services involved in the initrd boot phase.
+
+       ssuussppeenndd
+           Suspend the system. This will trigger activation of the special target unit suspend.target. This command
+           is asynchronous, and will return after the suspend operation is successfully enqueued. It will not wait
+           for the suspend/resume cycle to complete.
+
+       hhiibbeerrnnaattee
+           Hibernate the system. This will trigger activation of the special target unit hibernate.target. This
+           command is asynchronous, and will return after the hibernation operation is successfully enqueued. It will
+           not wait for the hibernate/thaw cycle to complete.
+
+       hhyybbrriidd--sslleeeepp
+           Hibernate and suspend the system. This will trigger activation of the special target unit
+           hybrid-sleep.target. This command is asynchronous, and will return after the hybrid sleep operation is
+           successfully enqueued. It will not wait for the sleep/wake-up cycle to complete.
+
+       ssuussppeenndd--tthheenn--hhiibbeerrnnaattee
+           Suspend the system and hibernate it after the delay specified in systemd-sleep.conf. This will trigger
+           activation of the special target unit suspend-then-hibernate.target. This command is asynchronous, and
+           will return after the hybrid sleep operation is successfully enqueued. It will not wait for the
+           sleep/wake-up or hibernate/thaw cycle to complete.
+
+   PPaarraammeetteerr SSyynnttaaxx
+       Unit commands listed above take either a single unit name (designated as _U_N_I_T), or multiple unit
+       specifications (designated as _P_A_T_T_E_R_N...). In the first case, the unit name with or without a suffix must be
+       given. If the suffix is not specified (unit name is "abbreviated"), systemctl will append a suitable suffix,
+       ".service" by default, and a type-specific suffix in case of commands which operate only on specific unit
+       types. For example,
+
+           # systemctl start sshd
+
+       and
+
+           # systemctl start sshd.service
+
+       are equivalent, as are
+
+           # systemctl isolate default
+
+       and
+
+           # systemctl isolate default.target
+
+       Note that (absolute) paths to device nodes are automatically converted to device unit names, and other
+       (absolute) paths to mount unit names.
+
+           # systemctl status /dev/sda
+           # systemctl status /home
+
+       are equivalent to:
+
+           # systemctl status dev-sda.device
+           # systemctl status home.mount
+
+       In the second case, shell-style globs will be matched against the primary names of all units currently in
+       memory; literal unit names, with or without a suffix, will be treated as in the first case. This means that
+       literal unit names always refer to exactly one unit, but globs may match zero units and this is not considered
+       an error.
+
+       Glob patterns use ffnnmmaattcchh(3), so normal shell-style globbing rules are used, and "*", "?", "[]" may be used.
+       See gglloobb(7) for more details. The patterns are matched against the primary names of units currently in memory,
+       and patterns which do not match anything are silently skipped. For example:
+
+           # systemctl stop sshd@*.service
+
+       will stop all sshd@.service instances. Note that alias names of units, and units that aren't in memory are not
+       considered for glob expansion.
+
+       For unit file commands, the specified _U_N_I_T should be the name of the unit file (possibly abbreviated, see
+       above), or the absolute path to the unit file:
+
+           # systemctl enable foo.service
+
+       or
+
+           # systemctl link /path/to/foo.service
+
+OOPPTTIIOONNSS
+       The following options are understood:
+
+       --tt, ----ttyyppee==
+           The argument is a comma-separated list of unit types such as sseerrvviiccee and ssoocckkeett. When units are listed
+           with lliisstt--uunniittss, sshhooww, or ssttaattuuss, only units of the specified types will be shown. By default, units of
+           all types are shown.
+
+           As a special case, if one of the arguments is hheellpp, a list of allowed values will be printed and the
+           program will exit.
+
+       ----ssttaattee==
+           The argument is a comma-separated list of unit LOAD, SUB, or ACTIVE states. When listing units with
+           lliisstt--uunniittss, sshhooww, or ssttaattuuss, show only those in the specified states. Use ----ssttaattee==ffaaiilleedd or ----ffaaiilleedd to
+           show only failed units.
+
+           As a special case, if one of the arguments is hheellpp, a list of allowed values will be printed and the
+           program will exit.
+
+       --pp, ----pprrooppeerrttyy==
+           When showing unit/job/manager properties with the sshhooww command, limit display to properties specified in
+           the argument. The argument should be a comma-separated list of property names, such as "MainPID". Unless
+           specified, all known properties are shown. If specified more than once, all properties with the specified
+           names are shown. Shell completion is implemented for property names.
+
+           For the manager itself, ssyysstteemmccttll sshhooww will show all available properties, most of which are derived or
+           closely match the options described in ssyysstteemmdd--ssyysstteemm..ccoonnff(5).
+
+           Properties for units vary by unit type, so showing any unit (even a non-existent one) is a way to list
+           properties pertaining to this type. Similarly, showing any job will list properties pertaining to all
+           jobs. Properties for units are documented in ssyysstteemmdd..uunniitt(5), and the pages for individual unit types
+           ssyysstteemmdd..sseerrvviiccee(5), ssyysstteemmdd..ssoocckkeett(5), etc.
+
+       --PP
+           Equivalent to ----vvaalluuee ----pprrooppeerrttyy==, i.e. shows the value of the property without the property name or "=".
+           Note that using --PP once will also affect all properties listed with --pp/----pprrooppeerrttyy==.
+
+       --aa, ----aallll
+           When listing units with lliisstt--uunniittss, also show inactive units and units which are following other units.
+           When showing unit/job/manager properties, show all properties regardless whether they are set or not.
+
+           To list all units installed in the file system, use the lliisstt--uunniitt--ffiilleess command instead.
+
+           When listing units with lliisstt--ddeeppeennddeenncciieess, recursively show dependencies of all dependent units (by
+           default only dependencies of target units are shown).
+
+           When used with ssttaattuuss, show journal messages in full, even if they include unprintable characters or are
+           very long. By default, fields with unprintable characters are abbreviated as "blob data". (Note that the
+           pager may escape unprintable characters again.)
+
+       --rr, ----rreeccuurrssiivvee
+           When listing units, also show units of local containers. Units of local containers will be prefixed with
+           the container name, separated by a single colon character (":").
+
+       ----rreevveerrssee
+           Show reverse dependencies between units with lliisstt--ddeeppeennddeenncciieess, i.e. follow dependencies of type
+           _W_a_n_t_e_d_B_y_=, _R_e_q_u_i_r_e_d_B_y_=, _P_a_r_t_O_f_=, _B_o_u_n_d_B_y_=, instead of _W_a_n_t_s_= and similar.
+
+       ----aafftteerr
+           With lliisstt--ddeeppeennddeenncciieess, show the units that are ordered before the specified unit. In other words,
+           recursively list units following the _A_f_t_e_r_= dependency.
+
+           Note that any _A_f_t_e_r_= dependency is automatically mirrored to create a _B_e_f_o_r_e_= dependency. Temporal
+           dependencies may be specified explicitly, but are also created implicitly for units which are _W_a_n_t_e_d_B_y_=
+           targets (see ssyysstteemmdd..ttaarrggeett(5)), and as a result of other directives (for example _R_e_q_u_i_r_e_s_M_o_u_n_t_s_F_o_r_=).
+           Both explicitly and implicitly introduced dependencies are shown with lliisstt--ddeeppeennddeenncciieess.
+
+           When passed to the lliisstt--jjoobbss command, for each printed job show which other jobs are waiting for it. May
+           be combined with ----bbeeffoorree to show both the jobs waiting for each job as well as all jobs each job is
+           waiting for.
+
+       ----bbeeffoorree
+           With lliisstt--ddeeppeennddeenncciieess, show the units that are ordered after the specified unit. In other words,
+           recursively list units following the _B_e_f_o_r_e_= dependency.
+
+           When passed to the lliisstt--jjoobbss command, for each printed job show which other jobs it is waiting for. May be
+           combined with ----aafftteerr to show both the jobs waiting for each job as well as all jobs each job is waiting
+           for.
+
+       ----wwiitthh--ddeeppeennddeenncciieess
+           When used with ssttaattuuss, ccaatt, lliisstt--uunniittss, and lliisstt--uunniitt--ffiilleess, those commands print all specified units and
+           the dependencies of those units.
+
+           Options ----rreevveerrssee, ----aafftteerr, ----bbeeffoorree may be used to change what types of dependencies are shown.
+
+       --ll, ----ffuullll
+           Do not ellipsize unit names, process tree entries, journal output, or truncate unit descriptions in the
+           output of ssttaattuuss, lliisstt--uunniittss, lliisstt--jjoobbss, and lliisstt--ttiimmeerrss.
+
+           Also, show installation targets in the output of iiss--eennaabblleedd.
+
+       ----vvaalluuee
+           When printing properties with sshhooww, only print the value, and skip the property name and "=". Also see
+           option --PP above.
+
+       ----sshhooww--ttyyppeess
+           When showing sockets, show the type of the socket.
+
+       ----jjoobb--mmooddee==
+           When queuing a new job, this option controls how to deal with already queued jobs. It takes one of "fail",
+           "replace", "replace-irreversibly", "isolate", "ignore-dependencies", "ignore-requirements", "flush", or
+           "triggering". Defaults to "replace", except when the iissoollaattee command is used which implies the "isolate"
+           job mode.
+
+           If "fail" is specified and a requested operation conflicts with a pending job (more specifically: causes
+           an already pending start job to be reversed into a stop job or vice versa), cause the operation to fail.
+
+           If "replace" (the default) is specified, any conflicting pending job will be replaced, as necessary.
+
+           If "replace-irreversibly" is specified, operate like "replace", but also mark the new jobs as
+           irreversible. This prevents future conflicting transactions from replacing these jobs (or even being
+           enqueued while the irreversible jobs are still pending). Irreversible jobs can still be cancelled using
+           the ccaanncceell command. This job mode should be used on any transaction which pulls in shutdown.target.
+
+           "isolate" is only valid for start operations and causes all other units to be stopped when the specified
+           unit is started. This mode is always used when the iissoollaattee command is used.
+
+           "flush" will cause all queued jobs to be canceled when the new job is enqueued.
+
+           If "ignore-dependencies" is specified, then all unit dependencies are ignored for this new job and the
+           operation is executed immediately. If passed, no required units of the unit passed will be pulled in, and
+           no ordering dependencies will be honored. This is mostly a debugging and rescue tool for the administrator
+           and should not be used by applications.
+
+           "ignore-requirements" is similar to "ignore-dependencies", but only causes the requirement dependencies to
+           be ignored, the ordering dependencies will still be honored.
+
+           "triggering" may only be used with ssyysstteemmccttll ssttoopp. In this mode, the specified unit and any active units
+           that trigger it are stopped. See the discussion of _T_r_i_g_g_e_r_s_= in ssyysstteemmdd..uunniitt(5) for more information about
+           triggering units.
+
+       --TT, ----sshhooww--ttrraannssaaccttiioonn
+           When enqueuing a unit job (for example as effect of a ssyysstteemmccttll ssttaarrtt invocation or similar), show brief
+           information about all jobs enqueued, covering both the requested job and any added because of unit
+           dependencies. Note that the output will only include jobs immediately part of the transaction requested.
+           It is possible that service start-up program code run as effect of the enqueued jobs might request further
+           jobs to be pulled in. This means that completion of the listed jobs might ultimately entail more jobs than
+           the listed ones.
+
+       ----ffaaiill
+           Shorthand for ----jjoobb--mmooddee==fail.
+
+           When used with the kkiillll command, if no units were killed, the operation results in an error.
+
+       ----cchheecckk--iinnhhiibbiittoorrss==
+           When system shutdown or sleep state is requested, this option controls checking of inhibitor locks. It
+           takes one of "auto", "yes" or "no". Defaults to "auto", which will behave like "yes" for interactive
+           invocations (i.e. from a TTY) and "no" for non-interactive invocations.  "yes" lets the request respect
+           inhibitor locks.  "no" lets the request ignore inhibitor locks.
+
+           Applications can establish inhibitor locks to prevent certain important operations (such as CD burning)
+           from being interrupted by system shutdown or sleep. Any user may take these locks and privileged users may
+           override these locks. If any locks are taken, shutdown and sleep state requests will normally fail (unless
+           privileged). However, if "no" is specified or "auto" is specified on a non-interactive requests, the
+           operation will be attempted. If locks are present, the operation may require additional privileges.
+
+           Option ----ffoorrccee provides another way to override inhibitors.
+
+       --ii
+           Shortcut for ----cchheecckk--iinnhhiibbiittoorrss==nnoo.
+
+       ----ddrryy--rruunn
+           Just print what would be done. Currently supported by verbs hhaalltt, ppoowweerrooffff, rreebboooott, kkeexxeecc, ssuussppeenndd,
+           hhiibbeerrnnaattee, hhyybbrriidd--sslleeeepp, ssuussppeenndd--tthheenn--hhiibbeerrnnaattee, ddeeffaauulltt, rreessccuuee, eemmeerrggeennccyy, and eexxiitt.
+
+       --qq, ----qquuiieett
+           Suppress printing of the results of various commands and also the hints about truncated log lines. This
+           does not suppress output of commands for which the printed output is the only result (like sshhooww). Errors
+           are always printed.
+
+       ----nnoo--bblloocckk
+           Do not synchronously wait for the requested operation to finish. If this is not specified, the job will be
+           verified, enqueued and ssyysstteemmccttll will wait until the unit's start-up is completed. By passing this
+           argument, it is only verified and enqueued. This option may not be combined with ----wwaaiitt.
+
+       ----wwaaiitt
+           Synchronously wait for started units to terminate again. This option may not be combined with ----nnoo--bblloocckk.
+           Note that this will wait forever if any given unit never terminates (by itself or by getting stopped
+           explicitly); particularly services which use "RemainAfterExit=yes".
+
+           When used with iiss--ssyysstteemm--rruunnnniinngg, wait until the boot process is completed before returning.
+
+       ----uusseerr
+           Talk to the service manager of the calling user, rather than the service manager of the system.
+
+       ----ssyysstteemm
+           Talk to the service manager of the system. This is the implied default.
+
+       ----ffaaiilleedd
+           List units in failed state. This is equivalent to ----ssttaattee==ffaaiilleedd.
+
+       ----nnoo--wwaallll
+           Do not send wall message before halt, power-off and reboot.
+
+       ----gglloobbaall
+           When used with eennaabbllee and ddiissaabbllee, operate on the global user configuration directory, thus enabling or
+           disabling a unit file globally for all future logins of all users.
+
+       ----nnoo--rreellooaadd
+           When used with eennaabbllee and ddiissaabbllee, do not implicitly reload daemon configuration after executing the
+           changes.
+
+       ----nnoo--aasskk--ppaasssswwoorrdd
+           When used with ssttaarrtt and related commands, disables asking for passwords. Background services may require
+           input of a password or passphrase string, for example to unlock system hard disks or cryptographic
+           certificates. Unless this option is specified and the command is invoked from a terminal, ssyysstteemmccttll will
+           query the user on the terminal for the necessary secrets. Use this option to switch this behavior off. In
+           this case, the password must be supplied by some other means (for example graphical password agents) or
+           the service might fail. This also disables querying the user for authentication for privileged operations.
+
+       ----kkiillll--wwhhoomm==
+           When used with kkiillll, choose which processes to send a signal to. Must be one of mmaaiinn, ccoonnttrrooll or aallll to
+           select whether to kill only the main process, the control process or all processes of the unit. The main
+           process of the unit is the one that defines the life-time of it. A control process of a unit is one that
+           is invoked by the manager to induce state changes of it. For example, all processes started due to the
+           _E_x_e_c_S_t_a_r_t_P_r_e_=, _E_x_e_c_S_t_o_p_= or _E_x_e_c_R_e_l_o_a_d_= settings of service units are control processes. Note that there
+           is only one control process per unit at a time, as only one state change is executed at a time. For
+           services of type _T_y_p_e_=_f_o_r_k_i_n_g, the initial process started by the manager for _E_x_e_c_S_t_a_r_t_= is a control
+           process, while the process ultimately forked off by that one is then considered the main process of the
+           unit (if it can be determined). This is different for service units of other types, where the process
+           forked off by the manager for _E_x_e_c_S_t_a_r_t_= is always the main process itself. A service unit consists of
+           zero or one main process, zero or one control process plus any number of additional processes. Not all
+           unit types manage processes of these types however. For example, for mount units, control processes are
+           defined (which are the invocations of /bin/mount and /bin/umount), but no main process is defined. If
+           omitted, defaults to aallll.
+
+       --ss, ----ssiiggnnaall==
+           When used with kkiillll, choose which signal to send to selected processes. Must be one of the well-known
+           signal specifiers such as SSIIGGTTEERRMM, SSIIGGIINNTT or SSIIGGSSTTOOPP. If omitted, defaults to SSIIGGTTEERRMM.
+
+           The special value "help" will list the known values and the program will exit immediately, and the special
+           value "list" will list known values along with the numerical signal numbers and the program will exit
+           immediately.
+
+       ----wwhhaatt==
+           Select what type of per-unit resources to remove when the cclleeaann command is invoked, see below. Takes one
+           of ccoonnffiigguurraattiioonn, ssttaattee, ccaacchhee, llooggss, rruunnttiimmee to select the type of resource. This option may be specified
+           more than once, in which case all specified resource types are removed. Also accepts the special value aallll
+           as a shortcut for specifying all five resource types. If this option is not specified defaults to the
+           combination of ccaacchhee and rruunnttiimmee, i.e. the two kinds of resources that are generally considered to be
+           redundant and can be reconstructed on next invocation.
+
+       --ff, ----ffoorrccee
+           When used with eennaabbllee, overwrite any existing conflicting symlinks.
+
+           When used with eeddiitt, create all of the specified units which do not already exist.
+
+           When used with hhaalltt, ppoowweerrooffff, rreebboooott or kkeexxeecc, execute the selected operation without shutting down all
+           units. However, all processes will be killed forcibly and all file systems are unmounted or remounted
+           read-only. This is hence a drastic but relatively safe option to request an immediate reboot. If ----ffoorrccee
+           is specified twice for these operations (with the exception of kkeexxeecc), they will be executed immediately,
+           without terminating any processes or unmounting any file systems. Warning: specifying ----ffoorrccee twice with
+           any of these operations might result in data loss. Note that when ----ffoorrccee is specified twice the selected
+           operation is executed by ssyysstteemmccttll itself, and the system manager is not contacted. This means the command
+           should succeed even when the system manager has crashed.
+
+       ----mmeessssaaggee==
+           When used with hhaalltt, ppoowweerrooffff or rreebboooott, set a short message explaining the reason for the operation. The
+           message will be logged together with the default shutdown message.
+
+       ----nnooww
+           When used with eennaabbllee, the units will also be started. When used with ddiissaabbllee or mmaasskk, the units will also
+           be stopped. The start or stop operation is only carried out when the respective enable or disable
+           operation has been successful.
+
+       ----rroooott==
+           When used with eennaabbllee/ddiissaabbllee/iiss--eennaabblleedd (and related commands), use the specified root path when looking
+           for unit files. If this option is present, ssyysstteemmccttll will operate on the file system directly, instead of
+           communicating with the ssyysstteemmdd daemon to carry out changes.
+
+       ----iimmaaggee==_i_m_a_g_e
+           Takes a path to a disk image file or block device node. If specified, all operations are applied to file
+           system in the indicated disk image. This option is similar to ----rroooott==, but operates on file systems stored
+           in disk images or block devices. The disk image should either contain just a file system or a set of file
+           systems within a GPT partition table, following the DDiissccoovveerraabbllee PPaarrttiittiioonnss SSppeecciiffiiccaattiioonn[1]. For further
+           information on supported disk images, see ssyysstteemmdd--nnssppaawwnn(1)'s switch of the same name.
+
+       ----rruunnttiimmee
+           When used with eennaabbllee, ddiissaabbllee, eeddiitt, (and related commands), make changes only temporarily, so that they
+           are lost on the next reboot. This will have the effect that changes are not made in subdirectories of
+           /etc/ but in /run/, with identical immediate effects, however, since the latter is lost on reboot, the
+           changes are lost too.
+
+           Similarly, when used with sseett--pprrooppeerrttyy, make changes only temporarily, so that they are lost on the next
+           reboot.
+
+       ----pprreesseett--mmooddee==
+           Takes one of "full" (the default), "enable-only", "disable-only". When used with the pprreesseett or pprreesseett--aallll
+           commands, controls whether units shall be disabled and enabled according to the preset rules, or only
+           enabled, or only disabled.
+
+       --nn, ----lliinneess==
+           When used with ssttaattuuss, controls the number of journal lines to show, counting from the most recent ones.
+           Takes a positive integer argument, or 0 to disable journal output. Defaults to 10.
+
+       --oo, ----oouuttppuutt==
+           When used with ssttaattuuss, controls the formatting of the journal entries that are shown. For the available
+           choices, see jjoouurrnnaallccttll(1). Defaults to "short".
+
+       ----ffiirrmmwwaarree--sseettuupp
+           When used with the rreebboooott, ppoowweerrooffff, or hhaalltt command, indicate to the system's firmware to reboot into the
+           firmware setup interface for the next boot. Note that this functionality is not available on all systems.
+
+       ----bboooott--llooaaddeerr--mmeennuu==_t_i_m_e_o_u_t
+           When used with the rreebboooott, ppoowweerrooffff, or hhaalltt command, indicate to the system's boot loader to show the
+           boot loader menu on the following boot. Takes a time value as parameter — indicating the menu timeout.
+           Pass zero in order to disable the menu timeout. Note that not all boot loaders support this functionality.
+
+       ----bboooott--llooaaddeerr--eennttrryy==_I_D
+           When used with the rreebboooott, ppoowweerrooffff, or hhaalltt command, indicate to the system's boot loader to boot into a
+           specific boot loader entry on the following boot. Takes a boot loader entry identifier as argument, or
+           "help" in order to list available entries. Note that not all boot loaders support this functionality.
+
+       ----rreebboooott--aarrgguummeenntt==
+           This switch is used with rreebboooott. The value is architecture and firmware specific. As an example,
+           "recovery" might be used to trigger system recovery, and "fota" might be used to trigger a “firmware over
+           the air” update.
+
+       ----ppllaaiinn
+           When used with lliisstt--ddeeppeennddeenncciieess, lliisstt--uunniittss or lliisstt--mmaacchhiinneess, the output is printed as a list instead of
+           a tree, and the bullet circles are omitted.
+
+       ----ttiimmeessttaammpp==
+           Change the format of printed timestamps. The following values may be used:
+
+           pprreettttyy (this is the default)
+               "Day YYYY-MM-DD HH:MM:SS TZ"
+
+           uunniixx
+               "@seconds-since-the-epoch"
+
+           uuss, µµss
+               "Day YYYY-MM-DD HH:MM:SS.UUUUUU TZ"
+
+           uuttcc
+               "Day YYYY-MM-DD HH:MM:SS UTC"
+
+           uuss++uuttcc, µµss++uuttcc
+               "Day YYYY-MM-DD HH:MM:SS.UUUUUU UTC"
+
+       ----mmkkddiirr
+           When used with bbiinndd, creates the destination file or directory before applying the bind mount. Note that
+           even though the name of this option suggests that it is suitable only for directories, this option also
+           creates the destination file node to mount over if the object to mount is not a directory, but a regular
+           file, device node, socket or FIFO.
+
+       ----mmaarrkkeedd
+           Only allowed with rreellooaadd--oorr--rreessttaarrtt. Enqueues restart jobs for all units that have the "needs-restart"
+           mark, and reload jobs for units that have the "needs-reload" mark. When a unit marked for reload does not
+           support reload, restart will be queued. Those properties can be set using sseett--pprrooppeerrttyy MMaarrkkeerrss==.......
+
+           Unless ----nnoo--bblloocckk is used, ssyysstteemmccttll will wait for the queued jobs to finish.
+
+       ----rreeaadd--oonnllyy
+           When used with bbiinndd, creates a read-only bind mount.
+
+       --HH, ----hhoosstt==
+           Execute the operation remotely. Specify a hostname, or a username and hostname separated by "@", to
+           connect to. The hostname may optionally be suffixed by a port ssh is listening on, separated by ":", and
+           then a container name, separated by "/", which connects directly to a specific container on the specified
+           host. This will use SSH to talk to the remote machine manager instance. Container names may be enumerated
+           with mmaacchhiinneeccttll --HH _H_O_S_T. Put IPv6 addresses in brackets.
+
+       --MM, ----mmaacchhiinnee==
+           Execute operation on a local container. Specify a container name to connect to, optionally prefixed by a
+           user name to connect as and a separating "@" character. If the special string ".host" is used in place of
+           the container name, a connection to the local system is made (which is useful to connect to a specific
+           user's user bus: "--user --machine=lennart@.host"). If the "@" syntax is not used, the connection is made
+           as root user. If the "@"
